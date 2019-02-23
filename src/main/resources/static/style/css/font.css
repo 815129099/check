@@ -1,0 +1,26 @@
+@font-face {
+  font-family: 'iconfont';
+  src: url('../fonts/iconfont.eot');
+  src: url('../fonts/iconfont.eot?#iefix') format('embedded-opentype'),
+  url('../fonts/iconfont.woff') format('woff'),
+  url('../fonts/iconfont.ttf') format('truetype'),
+  url('../fonts/iconfont.svg#iconfont') format('svg');
+}
+.iconfont{
+  font-family:"iconfont" !important;
+  font-size:20px;font-style:normal;
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-stroke-width: 0.2px;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/*
+@font-face {
+  font-family: 'iconfont';
+  src: url('//at.alicdn.com/t/font_1056589_o9oo7bqglk.eot');
+  src: url('//at.alicdn.com/t/font_1056589_o9oo7bqglk.eot?#iefix') format('embedded-opentype'),
+  url('//at.alicdn.com/t/font_1056589_o9oo7bqglk.woff2') format('woff2'),
+  url('//at.alicdn.com/t/font_1056589_o9oo7bqglk.woff') format('woff'),
+  url('//at.alicdn.com/t/font_1056589_o9oo7bqglk.ttf') format('truetype'),
+  url('//at.alicdn.com/t/font_1056589_o9oo7bqglk.svg#iconfont') format('svg');
+}*/

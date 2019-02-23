@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<meta charset="UTF-8"/>
+	<title>后台系统管理</title>
+	<meta name="viewport" content="width=device-width,initial-scale=1" />
+	<meta name="renderer" content="webkit|ie-comp|ie-stand"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=10" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="static/style/css/font.css" th:href="@{style/css/font.css}"/>
+	<link rel="stylesheet" href="static/style/css/xadmin.css" th:href="@{style/css/xadmin.css}" />
+	<link rel="stylesheet" href="static/style/css/datatables.min.css" th:href="@{style/css/datatables.min.css}"/>
+</head>
+<body>
+    <!-- 顶部开始 -->
+    <div class="container">
+        <div class="logo"><a href="maSystem.do">储备干部考核系统</a></div>
+        <div class="left_open">
+            <i title="展开左侧栏" class="iconfont">&#xec7e;</i>
+        </div>
+        <ul class="layui-nav right" lay-filter="">
+
+            <li class="layui-nav-item">
+                    <a href="javascript:;"><p shiro:principal=""/></a>
+                    <dl class="layui-nav-child"> <!-- 二级菜单 -->
+                        <dd><a href="logout">切换帐号</a></dd>
+                        <dd><a href="logout">退出</a></dd>
+                    </dl>
+            </li>
+
+
+          <li class="layui-nav-item to-index"><a href="xkLogin.do">登录</a></li>
+        </ul>
+        
+    </div>
+    <!-- 顶部结束 -->
+    <!-- 中部开始 -->
+     <!-- 左侧菜单开始 -->
+    <div class="left-nav">
+      <div id="side-nav">
+        <ul id="nav">
+
+            <li>
+                <a href="javascript:;">
+                    <i class="iconfont">&#xeb64;</i>
+                    <cite>培训计划</cite>
+                    <i class="iconfont nav_right">&#xec0d;</i>
+                </a>
+                <ul class="sub-menu">
+                    <li>
+                        <a _href="planList.do">
+                            <i class="iconfont">&#xec0e;</i>
+                            <cite>培训计划</cite>
+                        </a>
+                    </li >
+                </ul>
+            </li>
+
+
+            <li>
+                <a href="javascript:;">
+                    <i class="iconfont">&#xec17;</i>
+                    <cite>实习报告</cite>
+                    <i class="iconfont nav_right">&#xec0d;</i>
+                </a>
+                <ul class="sub-menu">
+                    <li>
+                        <a _href="reportList.do">
+                            <i class="iconfont">&#xec0e;</i>
+                            <cite>实习报告</cite>
+                        </a>
+                    </li >
+                </ul>
+            </li>
+
+
+            <li shiro:hasAnyRoles="admin,tutor">
+                <a href="javascript:;">
+                    <i class="iconfont">&#xeb8b;</i>
+                    <cite>储干考核</cite>
+                    <i class="iconfont nav_right">&#xec0d;</i>
+                </a>
+                <ul class="sub-menu">
+                    <li shiro:hasRole="admin">
+                        <a _href="meList.do">
+                            <i class="iconfont">&#xec0e;</i>
+                            <cite>用户管理</cite>
+                        </a>
+                    </li >
+                    <li shiro:hasRole="admin">
+                        <a _href="stuList.do">
+                            <i class="iconfont">&#xec0e;</i>
+                            <cite>关系管理</cite>
+                        </a>
+                    </li >
+                    <li shiro:hasRole="tutor">
+                        <a _href="userInform.do">
+                            <i class="iconfont">&#xec0e;</i>
+                            <cite>填写考核成绩</cite>
+                        </a>
+                    </li >
+                    <li shiro:hasRole="admin">
+                        <a _href="accountList.do">
+                            <i class="iconfont">&#xec0e;</i>
+                            <cite>考核成绩列表</cite>
+                        </a>
+                    </li >
+                </ul>
+            </li>
+
+            <li>
+                <a href="javascript:;">
+                    <i class="iconfont">&#xec3b;</i>
+                    <cite>信息管理</cite>
+                    <i class="iconfont nav_right">&#xec0d;</i>
+                </a>
+                <ul class="sub-menu">
+                    <li>
+                        <a _href="userInfo.do">
+                            <i class="iconfont">&#xec0e;</i>
+                            <cite>修改密码</cite>
+                        </a>
+                    </li >
+                </ul>
+            </li>
+
+
+        </ul>
+      </div>
+    </div>
+    <!-- <div class="x-slide_left"></div> -->
+    <!-- 左侧菜单结束 -->
+    <!-- 右侧主体开始 -->
+    <div class="page-content">
+        <div class="layui-tab tab" lay-filter="xbs_tab" lay-allowclose="false">
+          <ul class="layui-tab-title">
+            <li>我的桌面</li>
+          </ul>
+          <div class="layui-tab-content">
+            <div class="layui-tab-item layui-show">
+                <iframe src='introduce.do' frameborder="0" id="faIframe" name="faIframe" scrolling="yes" class="x-iframe"></iframe>
+            </div>
+          </div>
+        </div>
+    </div>
+    <div class="page-content-bg"></div>
+    <!-- 右侧主体结束-->
+    <!-- 中部结束 -->
+    <!-- 底部开始 -->
+    <div class="footer">
+        <div class="copyright" style="text-align: center">@厦门金鹭特种合金有限公司 2019</div>
+    </div>
+    <!-- 底部结束 -->
+     <script type="text/javascript" src="static/style/js/jquery.1.10.1.min.js" th:src="@{style/js/jquery.1.10.1.min.js}"></script>
+        <script type="text/javascript"  src="static/style/lib/layui/layui.js" th:src="@{style/lib/layui/layui.js}"></script>
+        <script type="text/javascript" src="static/style/js/admin.js" th:src="@{style/js/admin.js}"></script>
+
+        <script src="static/style/js/service.ddlist.jquery.min.js" th:src="@{style/js/service.ddlist.jquery.min.js}"></script>
+        <script src="static/style/js/validate/jquery.validate.min.js" th:src="@{style/js/validate/jquery.validate.min.js}"></script>
+        <script src="static/style/js/validate/additional-methods.js" th:src="@{style/js/validate/additional-methods.js}"></script>
+        <script type="text/javascript" src="static/style/js/jquery.dataTables.min.js" th:src="@{style/js/jquery.dataTables.min.js}"></script>
+        <script type="text/javascript" src="static/style/js/common1.js" th:src="@{style/js/common1.js}"></script>
+        <script src="static/style/js/jqPaginator/jqPaginator.min.js" th:src="@{style/js/jqPaginator/jqPaginator.min.js}"></script>
+</body>
+</html>

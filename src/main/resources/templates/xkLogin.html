@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>考核系统-登录</title>
+<link rel="stylesheet" type="text/css" href="static/style/css/normalize.css" th:href="@{style/css/normalize.css}"/>
+<link rel="stylesheet" type="text/css" href="static/style/css/demo.css" th:href="@{style/css/demo.css}"/>
+<!--必要样式-->
+<link rel="stylesheet" type="text/css" href="static/style/css/component.css" th:href="@{style/css/component.css}"/>
+<!--[if IE]>
+<script src="static/style/js/html5.js" th:src="@{style/js/html5.js}"></script>
+<![endif]-->
+</head>
+<body>
+		<div class="container demo-1">
+			<div class="content">
+				<div id="large-header" class="large-header">
+					<canvas id="demo-canvas"></canvas>
+					<div class="logo_box">
+						<div style="text-align: center"><h1>储备干部考核系统</h1></div>
+
+						<form  id="loginForm" name="f" >
+							<div class="input_outer">
+								<span class="u_user"></span>
+								<input id="gNumber" class="text" type="text" placeholder="请输入账户" autocomplete="new-password" />
+							</div>
+							<div class="input_outer">
+								<span class="us_uer"></span>
+								<input id="password" class="text"  value="" type="password" placeholder="请输入密码" autocomplete="new-password"  />
+							</div>
+							<div class="mb2"><a class="act-but submit" href="javascript:;" id="loginBtn" >登录</a></div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div><!-- /container -->
+		<script src="static/style/js/TweenLite.min.js" th:src="@{style/js/TweenLite.min.js}"></script>
+		<script src="static/style/js/EasePack.min.js" th:src="@{style/js/EasePack.min.js}"></script>
+		<script src="static/style/js/rAF.js" th:src="@{style/js/rAF.js}"></script>
+		<script src="static/style/js/demo-1.js" th:src="@{style/js/demo-1.js}"></script>
+		<script src="static/style/js/jquery.1.10.1.min.js" th:src="@{style/js/jquery.1.10.1.min.js}"></script>
+		<script type="text/javascript">
+			//<![CDATA[
+
+
+			$(document).ready(function(){
+				$("#loginBtn").click(function(){
+
+					var g  = $("#gNumber").val();
+					var p = $("#password").val();
+					if(g==null || g==undefined || g==""){
+						alert("请输入账号");
+					}else if(p==null || p==undefined || p==""){
+						alert("请输入密码");
+					}else {
+						$.ajax({
+							url:"login",
+							type:"POST",
+							data:{"geNumber":g,"password":p},
+							async:false,
+							dataType: 'json',
+							success:function(result){
+								if(result.tip=="success"){
+									window.location='maSystem.do';
+								}else {
+									alert(result.tip);
+								}},
+							error:function(){window.location='error.do';}
+						})
+					}
+				})
+			})
+			//]]>
+</script>
+	</body>
+</html>

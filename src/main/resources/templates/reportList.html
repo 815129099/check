@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<meta charset="UTF-8"/>
+	<title>实习报告列表</title>
+	<meta name="viewport" content="width=device-width,initial-scale=1" />
+	<meta name="renderer" content="webkit"/>
+	<meta http-equiv="X-UA-Compatible" content="IE=10" />
+	<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />S
+	<link href="static/style/css/style20160105.css" rel="stylesheet" th:href="@{style/css/style20160105.css}"/>
+	<link href="http://apps.bdimg.com/libs/fontawesome/4.2.0/css/font-awesome.min.css" rel="stylesheet"/>
+	<link rel="stylesheet" href="static/style/css/table.css"  th:href="@{style/css/table.css}"/>
+	<link rel="stylesheet" href="static/style/css/bootstrap.min.css"  th:href="@{style/css/bootstrap.min.css}"/>
+	<link rel="stylesheet" href="static/style/css/jquery.datetimepicker.css"  th:href="@{style/css/jquery.datetimepicker.css}"/>
+</head>
+
+
+<body>
+<div class="x-body" >
+	<div class="container" style="padding-top:30px;width:100%;">
+		<div class="content">
+			<!-- Content wrapper -->
+			<div class="wrapper">
+				<!--主页-->
+				<div>
+					<!-- Table with toolbar -->
+					<div class="widget">
+						<!--查询条件-->
+						<div class="well">
+							<form class="form-inline" role="form" id="query">
+								<shiro:hasAnyRoles name="admin">
+									<input type="hidden" id="role" value="delete"/>
+								</shiro:hasAnyRoles>
+								<shiro:hasAnyRoles name="tutor,admin">
+									<input type="hidden" id="role1" value="up"/>
+								</shiro:hasAnyRoles>
+								<div class="form-group" style="margin-right:10px">
+									<label>储干工号:</label>
+									<input type="text" class="form-control" name="stuNumber" id="stuNumber" maxlength="128" placeholder="储干工号"/>
+								</div>
+
+								<div class="form-group" style="margin-right:10px">
+									<label>报告名称:</label>
+									<input type="text" class="form-control" name="reportName" id="reportName" maxlength="128" placeholder="报告名称"/>
+								</div>
+								<div class="form-group" style="margin-right:10px">
+									<label>状态:</label>
+									<select name="reportState" id="reportState" class="form-control">
+										<option value=""></option>
+										<option value="未上传">未上传</option>
+										<option value="已上传">已上传</option>
+									</select>
+								</div>
+
+								<div class="form-group">
+									<button type="button" class="btn btn-warning" id="querybtn">查询</button>
+								</div>
+							</form>
+						</div>
+						<!-- /well -->
+					</div>
+
+					<!--/数据表格-->
+                    <div class="alert alert-info alert-dismissable">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+                            &times;
+                        </button>
+                        实习报告格式为：.docx、.doc和.pdf
+                    </div>
+						<ul class="toolbar">
+							<li shiro:hasRole="admin"><a href="javascript:void(0)" id="addReport"><i class="fa fa-user"></i><span>添加</span></a></li>
+						</ul>
+					<table class="table table-striped table-bordered table-hover" id="userTable">
+						<thead>
+						<tr>
+
+							<th><input type="checkbox" id="chkAll"/></th>
+							<th>储干工号</th>
+							<th>姓名</th>
+							<th>计划名称</th>
+							<th>计划类型</th>
+							<th>状态</th>
+							<th>上传时间</th>
+							<th>操作</th>
+						</tr>
+						</thead>
+						<tbody>
+						</tbody>
+						<tfoot>
+						<tr>
+							<td colspan="9">
+								<div id="total" class="pull-left" style="padding-top:20px;padding-left:10px">&nbsp;</div>
+								<div class="pull-right">
+									<ul class="pagination" id="pagination"></ul>
+								</div>
+							</td>
+						</tr>
+						</tfoot>
+					</table>
+
+
+				</div>
+
+				<!--上传报告-->
+				<div class="modal fade" id="importModal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h4 class="modal-title" id="myModalLabel">上传报告</h4>
+							</div>
+							<form role="form" id="importForm" method="post">
+								<div class="modal-body">
+									<div class="well">
+										<div id="sucUpd" class="alert alert-success">
+											<button type="button" class="close" id="close" aria-hidden="true">
+												&times;
+											</button>
+											<strong>上传成功！</strong>
+										</div>
+										<div id="failUpd" class="alert alert-warning">
+											<button type="button" class="close" id="close"   aria-hidden="true">
+												&times;
+											</button>
+											<strong>上传失败！</strong>
+										</div>
+										<div class="alert alert-danger hide" id="tipError" style='color: white'>&nbsp;</div>
+										<div class="form-group">
+											<label for="userExcel">文件选择</label>
+											<input type="file" id="userExcel" class="form-input" name="userExcel"/>
+										</div>
+                                        <input type="hidden" id="hiddenId"/>
+                                        <input type="hidden" id="hiddenGeNumber"/>
+                                        <input type="hidden" id="hiddenGeName"/>
+                                        <input type="hidden" id="hiddenReportName"/>
+
+									</div>
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-default" data-dismiss="modal" id="cancel">取消</button>
+									<button type="submit" class="btn btn-warning" id="importBtn">开始上传</button>
+								</div>
+							</form>
+						</div>
+						<!-- /.modal-content -->
+					</div>
+					<!-- /.modal -->
+				</div>
+				<!--上传计划-->
+
+				<!--添加培训计划-->
+				<div class="modal fade" id="addModal" role="dialog"
+					 aria-labelledby="myModalLabel" aria-hidden="true">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h4 class="modal-title" id="myModalLabel">添加报告</h4>
+							</div>
+							<form role="form" id="addReportForm" method="post">
+								<div class="modal-body">
+									<div class="well">
+										<div id="sucUpd" class="alert alert-success">
+											<button type="button" class="close" id="close" aria-hidden="true">
+												&times;
+											</button>
+											<strong>添加成功！</strong>
+										</div>
+										<div id="failUpd" class="alert alert-warning">
+											<button type="button" class="close" id="close"   aria-hidden="true">
+												&times;
+											</button>
+											<strong>添加失败！</strong>
+										</div>
+
+										<div class="alert alert-danger hide" id="tipError" style='color: white'>&nbsp;</div>
+										<div class="form-group" style="margin-right: 10px">
+											<label>储干工号:</label>
+											<input type="text" class="form-control" name="stuNumber" id="stuNumber" placeholder="储干工号"/>
+										</div>
+										<div class="form-group" style="margin-right: 10px">
+											<label>报告名称:</label>
+											<input type="text" class="form-control" name="reportName" id="reportName" placeholder="报告名称"/>
+										</div>
+										<div class="form-group" style="margin-right:10px">
+											<label>报告类型:</label>
+											<select name="reportType" id="reportType" class="form-control">
+												<option value=""></option>
+												<option value="年度">年度</option>
+												<option value="月度">月度</option>
+											</select>
+										</div>
+									</div>
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-default"
+											data-dismiss="modal" id="cancel">取消</button>
+									<button type="submit" class="btn btn-warning" id="addBtn">添加</button>
+								</div>
+							</form>
+						</div>
+						<!-- /.modal-content -->
+					</div>
+					<!-- /.modal -->
+				</div>
+				<!-- /添加用户-->
+
+
+				<!--修改用户-->
+				<div class="modal fade" id="updateModal" role="dialog"
+					 aria-labelledby="myModalLabel" aria-hidden="true">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<!--
+                                    <button type="button" class="close" aria-hidden="true">&times;</button>
+                                    -->
+								<h4 class="modal-title" id="myModalLabel">修改用户信息</h4>
+							</div>
+							<form role="form" id="updateform">
+								<div class="modal-body">
+									<div class="well">
+										<div id="sucUpd" class="alert alert-success">
+											<button type="button" class="close" id="close" aria-hidden="true">
+												&times;
+											</button>
+											<strong>修改成功！</strong>
+										</div>
+										<div id="failUpd" class="alert alert-warning">
+											<button type="button" class="close" id="close"   aria-hidden="true">
+												&times;
+											</button>
+											<strong>修改失败！</strong>
+										</div>
+
+										<div class="alert alert-danger hide" id="tipError" style='color: white'>&nbsp;</div>
+										<div class="form-group" style="margin-right: 10px">
+											<label>工号:</label>
+											<input type="text" class="form-control" name="geNumber" id="geNumber" placeholder="工号" readonly="readonly"/>
+										</div>
+										<div class="form-group" style="margin-right: 10px">
+											<label>新密码:</label>
+											<input type="password" class="form-control" name="password" id="password" placeholder="新密码"/>
+										</div>
+										<div class="form-group" style="margin-right: 10px">
+											<label>验证密码:</label>
+											<input type="password" class="form-control" name="rePassword" id="rePassword" placeholder="再次输入密码"/>
+										</div>
+										<div class="form-group" style="margin-right: 10px">
+											<label>状态:</label>
+											<select name="userState" id="userState" class="form-control">
+												<option value="有效">有效</option>
+												<option value="无效">无效</option>
+											</select>
+										</div>
+										<div class="form-group" style="margin-right: 10px">
+											<label>手机号码:</label>
+											<input type="text" class="form-control" name="phone" id="phone" placeholder="手机号码"/>
+										</div>
+										<div class="form-group" style="margin-right: 10px">
+											<label>邮箱:</label>
+											<input type="text" class="form-control" name="email" id="email" placeholder="邮箱"/>
+										</div>
+									</div>
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-default" data-dismiss="modal" id="cancelbtn">取消</button>
+									<button type="submit" class="btn btn-warning" id="addBtn">修改</button>
+								</div>
+							</form>
+						</div>
+						<!-- /.modal-content -->
+					</div>
+					<!-- /.modal -->
+				</div>
+				<!-- 修改用户-->
+				<div class="col-lg-1"></div>
+			</div>
+		</div>
+	</div>
+</div>
+<script src="static/style/js/jquery.1.10.1.min.js" th:src="@{style/js/jquery.1.10.1.min.js}"></script>
+<script src="static/style/js/bootstrap.min.js" th:src="@{style/js/bootstrap.min.js}"></script>
+<script type="text/javascript"  src="static/style/lib/layui/layui.js" th:src="@{style/lib/layui/layui.js}"></script>
+<script type="text/javascript" src="static/style/js/admin.js" th:src="@{style/js/admin.js}"></script>
+<script src="static/style/js/service.ddlist.jquery.min.js" th:src="@{style/js/service.ddlist.jquery.min.js}"></script>
+
+<!-- 表单验证 -->
+<script src="static/style/js/validate/jquery.validate.min.js" th:src="@{style/js/validate/jquery.validate.min.js}"></script>
+<script src="static/style/js/validate/additional-methods.js" th:src="@{style/js/validate/additional-methods.js}"></script>
+<script type="text/javascript" src="static/style/js/jquery.dataTables.min.js" th:src="@{style/js/jquery.dataTables.min.js}"></script>
+<!-- 表格 -->
+<script type="text/javascript" src="static/style/js/common1.js" th:src="@{style/js/common1.js}"></script>
+<!-- 分页 -->
+<script src="static/style/js/jqPaginator/jqPaginator.min.js" th:src="@{style/js/jqPaginator/jqPaginator.min.js}"></script>
+<!--时间插件-->
+<script src="static/style/js/dateformat.js" th:src="@{style/js/dateformat.js}"></script>
+<script src="static/style/js/jquery.datetimepicker1.js" th:src="@{style/js/jquery.datetimepicker1.js}"></script>
+<script type="text/javascript">
+	//<![CDATA[
+	//表单验证
+	$.validator.setDefaults({
+		debug: true
+	});
+
+	$(document).ready(function(){
+		//查询全部用户列表
+		//时间控件初始化
+		$('#begin').datetimepicker({format:"Y-m-d",timepicker:false});
+		listUser();
+		$("#chkAll").click(function(){
+			chkAll("chkAll","chk");
+		});
+
+		//时间查询条件清空
+		$("#updateTime").click(function(){
+			$("#begin").val("");
+		});
+
+		//查询功能
+		$("#querybtn").click(function(){
+			listUser();
+		});
+		$("#querybtn1").click(function(){
+			window.location.href='exportReport.do';
+		});
+
+
+		//添加报告
+		$("a#addReport").click(function(){
+
+			$("#addReportForm #stuNumber").val("");
+			$("#addReportForm #reportName").val("");
+			$("#addReportForm #reportType").val("");
+			$("label.error").remove();
+			$("div#addModal #sucUpd").hide();
+			$("div#addModal #failUpd").hide();
+			$("#addModal").modal('show');
+
+			//设置表单验证
+			$("#addReportForm").validate({
+				//onfocusout:false,
+				onkeyup:false,
+				rules:{
+					stuNumber:{required:true,rangelength:[7,7]},
+					reportName:{required:true},
+					reportType:{required:true}
+				},
+				messages:{
+					stuNumber:{required:"工号不能为空<br/>",rangelength:"请输入7位员工工号<br/>"},
+					reportName:{required:"报告名称不能为空<br/>"},
+					reportType:{required:"请选择报告类型<br/>"}
+				},
+				submitHandler:function(){
+					if(!$("#addReportForm").valid()){
+						$("div#addModal #sucUpd").hide();
+						$("div#addModal #failUpd").hide();
+					}
+					else{
+						$.ajax({
+							url:"Report.do",
+							type:"POST",
+							data:{"stuNumber":$("#addReportForm #stuNumber").val(),
+								"reportName":$("#addReportForm #reportName").val(),
+								"reportType":$("#addReportForm #reportType").val()},
+							success:function(response){
+								if(response.tip=="success"){
+									$("div#addModal #sucUpd").show();
+									$("div#addModal #failUpd").hide();
+									//关闭窗口后刷新列表
+									$("#addReportForm #cancel").click(function(){listUser();});
+								}
+								else{
+									$("div#addModal #failUpd").show();
+									$("div#addModal #sucUpd").hide();
+								}
+							}});
+
+					}
+				}
+			});
+		});
+
+	});
+
+	//查看用户
+	function preview(obj){
+		var id =  $(obj).parent("td").attr("id");
+		var geNumber = $(obj).parent("td").siblings("td").eq(1).html();
+		window.location="allegeList.do?geNumber="+geNumber;
+	}
+
+	function listUser(){
+		//查询条件
+		var stuNumber = $("form#query #stuNumber").val();
+		var reportName = $("form#query #reportName").val();
+		var reportState = $("form#query #reportState").val();
+
+
+		//获取用户列表
+		$.post('listReport.do', {"stuNumber":stuNumber, "reportName":reportName, "reportState":reportState},
+				function(response){
+					//生成结果列表
+					initDataTable("userTable", 8, new Array("stuNumber","geName","reportName","reportType","reportState","upTime"), response.page,
+							"listReport.do",  {"stuNumber":stuNumber,
+								"reportName":reportName,
+								"reportState":reportState
+							}, true, true, false, true,true,
+							"<a href='javascript:void(0)' title='上传' style='padding-right:20px' onclick='upReport(this)'><i class='fa fa-upload'></i></a>"+
+							"<a href='javascript:void(0)' title='下载' style='padding-right:20px' onclick='downReport(this)'><i class='fa fa-download'></i></a>"+
+							"<a href='javascript:void(0)' title='删除'  style='padding-right:20px' onclick='delReport(this)'><i class='fa fa-trash'></i></a>"+
+							"<a href='javascript:void(0)' title='查看'  style='padding-right:20px' onclick='preview(this)'><i class='fa fa-wrench'></i></a>",
+							"id"
+					);
+					//设置查询条件
+					$("form#query #stuNumber").val(stuNumber);
+					$("form#query #reportName").val(reportName);
+					$("form#query #reportState").val(reportState);
+				}
+		);
+	}
+
+
+
+	function downReport(obj) {
+		var geNumber = $(obj).parent("td").siblings("td").eq(1).html();
+		var geName = $(obj).parent("td").siblings("td").eq(2).html();
+		var reportName = $(obj).parent("td").siblings("td").eq(3).html();
+		var fileName = geNumber+"-"+geName+"-"+reportName;
+		window.location="downReport.do?fileName="+fileName;
+	}
+
+
+
+
+
+	//上传计划   去掉验证
+	function upReport(obj){
+		if($("#role1").val()==undefined){
+			alert("嘿嘿，你权限不够，让你导师上传");
+		}else {
+			var id =  $(obj).parent("td").attr("id");
+			var geNumber = $(obj).parent("td").siblings("td").eq(1).html();
+			var geName = $(obj).parent("td").siblings("td").eq(2).html();
+			var reportName = $(obj).parent("td").siblings("td").eq(3).html();
+			$("#importForm #hiddenId").val(id);
+            $("#importForm #hiddenGeName").val(geName);
+            $("#importForm #hiddenGeNumber").val(geNumber);
+            $("#importForm #hiddenReportName").val(reportName);
+
+			$("label.error").remove();
+			$("#importForm #userExcel").val("");
+			$("div#importModal #sucUpd").hide();
+			$("div#importModal #failUpd").hide();
+			$("#importModal").modal('show');
+			//设置表单验证
+
+			$("#importForm").validate({
+				//onfocusout:false,
+				onkeyup:false,
+				rules:{userExcel:{required:true}},
+				messages:{userExcel:{required:"请选择要上传的文件<br/>"}},
+				submitHandler:function(form){
+                        if(!$("#importForm").valid()){
+                            $("div#importModal #sucUpd").hide();
+                            $("div#importModal #failUpd").hide();
+                        }else{
+                            var formData = new FormData();
+                            var name = $("#importForm").val();
+                            formData.append("file",$("#userExcel")[0].files[0]);
+                            formData.append("name",name);
+                            formData.append("id",$("#importForm #hiddenId").val());
+                            formData.append("geNumber",$("#importForm #hiddenGeNumber").val());
+                            formData.append("geName",$("#importForm #hiddenGeName").val());
+                            formData.append("reportName",$("#importForm #hiddenReportName").val());
+                            $.ajax({
+                                url:"upReport.do",
+                                type:"POST",
+                                data:formData,
+                                contentType:false,
+                                processData:false,
+                                success:function(response){
+                                    if(response.tip=="success"){
+                                        $("div#importModal #sucUpd").show();
+                                        $("div#importModal #failUpd").hide();
+                                        //关闭窗口后刷新列表
+                                        $("#importForm #cancel").click(function(){listUser();});
+                                    }
+                                    else{
+                                        $("div#importModal #failUpd").show();
+                                        $("div#importModal #sucUpd").hide();
+                                    }
+                                },
+                                error:function () {
+                                    $("div#importModal #failUpd").show();
+                                    $("div#importModal #sucUpd").hide();
+                                }
+                            });
+                        }
+                    //}
+
+				}
+			});
+		}
+
+
+	}
+
+	//删除计划
+	function delReport(obj){
+		if($("#role").val()==undefined){
+			alert("没有权限！");
+		}else {
+				if (confirm("是否删除该计划？")) {
+					var id =  $(obj).parent("td").attr("id");
+					var data = {"id": id};
+					$.ajax({
+						url: "Report.do",
+						type: "DELETE",
+						data: JSON.stringify(data),
+						contentType: "application/json",
+						success: function (response) {
+							if (response.tip == "success") {
+								alert("删除成功");
+								listUser();
+							} else if (response.tip == "error") {
+								alert("删除失败!");
+							}
+						}
+					});
+				}
+
+		}
+	}
+	//]]>
+</script>
+</body>
+
+</html>

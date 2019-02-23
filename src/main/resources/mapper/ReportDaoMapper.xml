@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.dao.ReportDao">
+
+    <!-- 计划列表 -->
+    <select id="listReport" parameterType="Report" resultType="Map">
+        SELECT u.*,user.geName
+        FROM report u,user
+        <where>
+            <if test="stuNumber!=null and stuNumber!=''">
+                u.stuNumber LIKE #{stuNumber}
+            </if>
+            <if test="reportName!=null and reportName!=''">
+                AND u.reportName LIKE #{reportName}
+            </if>
+            <if test="reportState!=null and reportState!=''">
+                AND u.reportState = #{reportState}
+            </if>
+            and u.reportState!="删除" and u.stuNumber = user.geNumber
+        </where>
+
+    </select>
+
+    <!-- 计划列表 -->
+    <select id="listReportByStu"  resultType="Map">
+        SELECT u.*,user.geName
+        FROM Report u,user
+        <where>
+            <if test="p.stuNumber!=null and p.stuNumber!=''">
+                u.stuNumber LIKE #{p.stuNumber}
+            </if>
+            <if test="p.reportName!=null and p.reportName!=''">
+                AND u.reportName LIKE #{p.reportName}
+            </if>
+            <if test="p.reportState!=null and p.reportState!=''">
+                AND u.reportState = #{p.reportState}
+            </if>
+            and u.reportState!="删除" and u.stuNumber=#{geNumber} and u.stuNumber = user.geNumber
+        </where>
+
+    </select>
+
+    <!-- 计划列表 -->
+    <select id="listReportByTutor" parameterType="Report" resultType="Map">
+        SELECT u.*,user.geName
+        FROM report u,teacher,user
+        <where>
+            <if test="p.stuNumber!=null and p.stuNumber!=''">
+                u.stuNumber LIKE #{p.stuNumber}
+            </if>
+            <if test="p.reportName!=null and p.reportName!=''">
+                AND u.reportName LIKE #{p.reportName}
+            </if>
+            <if test="p.reportState!=null and p.reportState!=''">
+                AND u.reportState = #{p.reportState}
+            </if>
+            and u.reportState!="删除" and teacher.tutorNumber = #{geNumber} and teacher.stuNumber = u.stuNumber and teacher.stuNumber = user.geNumber
+        </where>
+
+    </select>
+
+    <update id="updateReportById" parameterType="Report">
+        update report
+        set upTime=#{upTime},reportState="已上传"
+        where id=#{id}
+    </update>
+
+    <insert id="addReport" parameterType="Report">
+        insert into report(stuNumber,reportName,reportType,reportState)
+        values (#{stuNumber},#{reportName},#{reportType},"未上传")
+    </insert>
+
+    <update id="delReport" parameterType="int">
+        update report
+        set reportState="删除"
+        where id=#{id}
+    </update>
+</mapper>

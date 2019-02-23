@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.dao.PlanDao">
+
+
+
+    <!-- 计划列表 -->
+    <select id="listPlan" parameterType="Plan" resultType="Map">
+        SELECT u.*,user.geName
+        FROM plan u,user
+        <where>
+            <if test="stuNumber!=null and stuNumber!=''">
+                u.stuNumber LIKE #{stuNumber}
+            </if>
+            <if test="planName!=null and planName!=''">
+                AND u.planName LIKE #{planName}
+            </if>
+            <if test="planState!=null and planState!=''">
+                AND u.planState = #{planState}
+            </if>
+            and u.planState!="删除" and u.stuNumber = user.geNumber
+        </where>
+
+    </select>
+
+    <!-- 计划列表 -->
+    <select id="listPlanByStu"  resultType="Map">
+        SELECT u.*,user.geName
+        FROM plan u,user
+        <where>
+            <if test="p.stuNumber!=null and p.stuNumber!=''">
+                u.stuNumber LIKE #{p.stuNumber}
+            </if>
+            <if test="p.planName!=null and p.planName!=''">
+                AND u.planName LIKE #{p.planName}
+            </if>
+            <if test="p.planState!=null and p.planState!=''">
+                AND u.planState = #{p.planState}
+            </if>
+            and u.planState!="删除" and u.stuNumber=#{geNumber} and u.stuNumber = user.geNumber
+        </where>
+
+    </select>
+
+    <!-- 计划列表 -->
+    <select id="listPlanByTutor" parameterType="Plan" resultType="Map">
+        SELECT u.*,user.geName
+        FROM plan u,teacher,user
+        <where>
+            <if test="p.stuNumber!=null and p.stuNumber!=''">
+                u.stuNumber LIKE #{p.stuNumber}
+            </if>
+            <if test="p.planName!=null and p.planName!=''">
+                AND u.planName LIKE #{p.planName}
+            </if>
+            <if test="p.planState!=null and p.planState!=''">
+                AND u.planState = #{p.planState}
+            </if>
+            and u.planState!="删除"
+        </where>
+            and teacher.tutorNumber = #{geNumber} and teacher.stuNumber = u.stuNumber and
+    </select>
+
+    <update id="updatePlanById" parameterType="Plan">
+        update plan
+        set upName=#{upName},upTime=#{upTime},planState="已上传"
+        where id=#{id}
+    </update>
+
+    <insert id="addPlan" parameterType="Plan">
+        insert into plan(stuNumber,planName,planType,planState)
+        values (#{stuNumber},#{planName},#{planType},"未上传")
+    </insert>
+
+    <update id="delPlan" parameterType="int">
+        update plan
+        set planState="删除"
+        where id=#{id}
+    </update>
+</mapper>
