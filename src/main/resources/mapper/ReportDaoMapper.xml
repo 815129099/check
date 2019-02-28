@@ -16,6 +16,9 @@
             <if test="reportState!=null and reportState!=''">
                 AND u.reportState = #{reportState}
             </if>
+            <if test="reportType!=null and reportType!=''">
+                AND u.reportType = #{reportType}
+            </if>
             and u.reportState!="删除" and u.stuNumber = user.geNumber
         </where>
 
@@ -34,6 +37,9 @@
             </if>
             <if test="p.reportState!=null and p.reportState!=''">
                 AND u.reportState = #{p.reportState}
+            </if>
+            <if test="p.reportType!=null and p.reportType!=''">
+                AND u.reportType = #{p.reportType}
             </if>
             and u.reportState!="删除" and u.stuNumber=#{geNumber} and u.stuNumber = user.geNumber
         </where>
@@ -54,7 +60,11 @@
             <if test="p.reportState!=null and p.reportState!=''">
                 AND u.reportState = #{p.reportState}
             </if>
-            and u.reportState!="删除" and teacher.tutorNumber = #{geNumber} and teacher.stuNumber = u.stuNumber and teacher.stuNumber = user.geNumber
+            <if test="p.reportType!=null and p.reportType!=''">
+                AND u.reportType = #{p.reportType}
+            </if>
+            and u.reportState!="删除"
+            and teacher.tutorNumber = #{geNumber} and teacher.stuNumber = u.stuNumber and teacher.stuNumber = user.geNumber
         </where>
 
     </select>

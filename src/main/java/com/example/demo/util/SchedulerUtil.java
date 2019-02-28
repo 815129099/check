@@ -1,6 +1,7 @@
 package com.example.demo.util;
 
 import com.example.demo.dao.UserDao;
+import com.example.demo.domain.Grade;
 import com.example.demo.domain.Plan;
 import com.example.demo.domain.Report;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,7 @@ public class SchedulerUtil {
         int month = calendar.get(Calendar.MONTH) + 1;
         List<Report> reportList = new ArrayList<>();
         List<Plan> planList = new ArrayList<>();
+        List<Grade> gList = new ArrayList<>();
         List<String> list = userDao.getStudentList();
         if(month==5 || month==11){
             for(String geNumber:list){
@@ -53,6 +55,18 @@ public class SchedulerUtil {
                 plan1.setPlanName("年度培训计划");
                 plan1.setPlanType("年度");
                 planList.add(plan1);
+
+                Grade grade1 = new Grade();
+                grade1.setStuNumber(geNumber);
+                grade1.setCheckName("年度考核");
+                grade1.setCheckType("年度");
+                gList.add(grade1);
+
+                Grade grade = new Grade();
+                grade.setStuNumber(geNumber);
+                grade.setCheckName(month+"月考核");
+                grade.setCheckType("月度");
+                gList.add(grade);
             }
         }else {
             for(String geNumber:list){
@@ -68,11 +82,17 @@ public class SchedulerUtil {
                 plan.setPlanType("月度");
                 planList.add(plan);
 
+                Grade grade = new Grade();
+                grade.setStuNumber(geNumber);
+                grade.setCheckName(month+"月考核");
+                grade.setCheckType("月度");
+                gList.add(grade);
             }
         }
 
         this.userDao.insertReportList(reportList);
         this.userDao.insertPlanList(planList);
+        this.userDao.insertCheckList(gList);
         System.out.println("定时任务执行时间：" + dateFormat.format(new Date()));
     }
 

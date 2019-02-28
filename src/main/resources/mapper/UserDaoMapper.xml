@@ -44,29 +44,6 @@
         ORDER BY u.updateTime desc
     </select>
 
-    <!-- 关系列表 -->
-    <select id="listTeacher" parameterType="Teacher" resultType="Map">
-        select user.geName AS stuName,teacher.stuNumber,teacher.tutorNumber ,u.geName tutorName
-        from user ,teacher,user u
-        <where>
-            <if test="stuNumber!=null and stuNumber!=''">
-                teacher.stuNumber LIKE #{stuNumber}
-            </if>
-            <if test="tutorNumber!=null and tutorNumber!=''">
-                AND teacher.tutorNumber LIKE #{tutorNumber}
-            </if>
-            and teacher.state="有效" and user.geNumber = teacher.stuNumber
-            and u.geNumber = teacher.tutorNumber
-        </where>
-    </select>
-
-    <!-- 关系列表 -->
-    <select id="getTeacherList" resultType="Map">
-        select user.geName AS stuName,teacher.stuNumber,teacher.tutorNumber ,u.geName tutorName,teacher.createTime,teacher.updateTime,teacher.state
-        from user ,teacher,user u
-        where user.geNumber = teacher.stuNumber and u.geNumber = teacher.tutorNumber
-    </select>
-
     <!--添加用户-->
     <insert id="addUser" parameterType="User" >
         INSERT ignore INTO user(geNumber,geName,password,createTime,updateTime,phone,role,authority,userState,email)
@@ -77,7 +54,7 @@
     <select id="getUserById" parameterType="String" resultType="User">
         select distinct *
         from user
-        where geNumber = #{geNumber}
+        where geNumber = #{geNumber} and userState!="删除"
     </select>
 
     <update id="updateUser" parameterType="User">
@@ -87,9 +64,9 @@
     </update>
 
     <update id="delUser" parameterType="String">
-        update user
-        set updateTime=#{updateTime},userState="删除"
-        where geNumber=#{geNumber}
+        update user,teacher
+        set user.updateTime=#{updateTime},user.userState="删除",teacher.state="删除",teacher.updateTime=#{updateTime}
+        where user.geNumber=#{geNumber} and user.geNumber in (teacher.stuNumber,teacher.tutorNumber)
     </update>
 
     <update id="updatePassword" parameterType="String">
@@ -122,14 +99,6 @@
         select * from user
     </select>
 
-    <insert id="insertTeacherList" parameterType="java.util.List">
-        insert ignore into  teacher(stuNumber,tutorNumber,state,createTime,updateTime)
-        values
-        <foreach collection="list" item="user" index="index" separator=",">
-            (#{user.stuNumber},#{user.tutorNumber},"有效",#{user.createTime},#{user.updateTime})
-        </foreach>
-    </insert>
-
     <select id="getStudentList" resultType="String">
         select geNumber
         from user
@@ -149,6 +118,14 @@
         values
         <foreach collection="list" item="plan" index="index" separator=",">
             (#{plan.stuNumber},#{plan.planName},#{plan.planType},"未上传")
+        </foreach>
+    </insert>
+
+    <insert id="insertCheckList" parameterType="java.util.List">
+        insert ignore into  grade(stuNumber,checkName,checkType,checkState)
+        values
+        <foreach collection="list" item="grade" index="index" separator=",">
+            (#{grade.stuNumber},#{grade.checkName},#{grade.checkType},"未评分")
         </foreach>
     </insert>
 </mapper>

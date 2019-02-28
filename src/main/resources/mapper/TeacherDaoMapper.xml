@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.dao.TeacherDao">
+
+    <!-- 关系列表 -->
+    <select id="listTeacher" parameterType="Teacher" resultType="Map">
+        select user.geName AS stuName,teacher.stuNumber,teacher.tutorNumber ,u.geName AS tutorName,teacher.id
+        from user ,teacher,user u
+        <where>
+            <if test="stuNumber!=null and stuNumber!=''">
+                teacher.stuNumber LIKE #{stuNumber}
+            </if>
+            <if test="tutorNumber!=null and tutorNumber!=''">
+                AND teacher.tutorNumber LIKE #{tutorNumber}
+            </if>
+            and teacher.state="有效" and user.geNumber = teacher.stuNumber
+            and u.geNumber = teacher.tutorNumber
+        </where>
+    </select>
+
+    <!-- 关系列表 -->
+    <select id="getTeacherList" resultType="Map">
+        select user.geName AS stuName,teacher.stuNumber,teacher.tutorNumber ,u.geName tutorName,teacher.createTime,teacher.updateTime,teacher.state
+        from user ,teacher,user u
+        where user.geNumber = teacher.stuNumber and u.geNumber = teacher.tutorNumber
+    </select>
+
+    <!--添加-->
+    <insert id="addTeacher" parameterType="Teacher" >
+        INSERT INTO teacher(stuNumber,tutorNumber,state,createTime,updateTime)
+        VALUES(#{stuNumber},#{tutorNumber},"有效",#{createTime},#{updateTime})
+    </insert>
+
+    <!--通过ID获取用户-->
+    <select id="getTeacherByStuNumber" parameterType="String" resultType="Teacher">
+        select distinct *
+        from teacher
+        where stuNumber = #{stuNumber} and state!="删除"
+    </select>
+
+    <update id="updateTeacher" parameterType="Teacher">
+        update teacher
+        set tutorNumber=#{tutorNumber},updateTime=#{updateTime}
+        where stuNumber=#{stuNumber} and state!="删除"
+    </update>
+
+    <delete id="delTeacher">
+        delete from teacher
+        where id=#{id}
+    </delete>
+
+    <insert id="insertTeacherList" parameterType="java.util.List">
+        insert ignore into  teacher(stuNumber,tutorNumber,state,createTime,updateTime)
+        values
+        <foreach collection="list" item="user" index="index" separator=",">
+            (#{user.stuNumber},#{user.tutorNumber},"有效",#{user.createTime},#{user.updateTime})
+        </foreach>
+    </insert>
+
+    <select id="getStuNumber" resultType="User">
+        select user.geNumber,user.geName
+        from user
+        where user.role="student" and user.userState!="删除" and user.geNumber not in
+          (select teacher.stuNumber
+          from teacher
+          where teacher.state !="删除")
+    </select>
+
+    <select id="getTutorNumber" resultType="User">
+        select user.geNumber,user.geName
+        from user
+        where user.role="tutor" and user.userState!="删除" and user.geNumber not in
+          (select teacher.tutorNumber
+          from teacher
+          where teacher.state !="删除")
+    </select>
+
+</mapper>

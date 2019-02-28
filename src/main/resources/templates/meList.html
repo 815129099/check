@@ -474,12 +474,7 @@
 
 	});
 
-	//查看用户
-	function preview(obj){
-		var id =  $(obj).parent("td").attr("id");
-		var geNumber = $(obj).parent("td").siblings("td").eq(1).html();
-		window.location="allegeList.do?geNumber="+geNumber;
-	}
+
 
 	function listUser(){
 		//查询条件
@@ -511,6 +506,14 @@
 	}
 
 
+	//查看用户
+	function preview(obj){
+		alert("待开发！");
+		/*
+		var id =  $(obj).parent("td").attr("id");
+		var geNumber = $(obj).parent("td").siblings("td").eq(1).html();
+		window.location="allegeList.do?geNumber="+geNumber;*/
+	}
 
 	//修改
 	function updateUser(obj){
@@ -575,8 +578,8 @@
 							$("#updateform #userState").val("");
 							listUser();
 						}else{
-							$("div#resetModal #failUpd").show();
-							$("div#resetModal #sucUpd").hide();
+							$("div#updateModal #failUpd").show();
+							$("div#updateModal #sucUpd").hide();
 						}}
 				})
 			}

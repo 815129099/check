@@ -52,6 +52,15 @@
 									</select>
 								</div>
 
+								<div class="form-group" style="margin-right:10px">
+									<label>计划类型:</label>
+									<select name="planType" id="planType" class="form-control">
+										<option value=""></option>
+										<option value="年度">年度</option>
+										<option value="月度">月度</option>
+									</select>
+								</div>
+
 								<div class="form-group">
 									<button type="button" class="btn btn-warning" id="querybtn">查询</button>
 								</div>
@@ -74,7 +83,7 @@
 						<thead>
 						<tr>
 
-							<th><input type="checkbox" id="chkAll"/></th>
+							<th>#</th>
 							<th>储干工号</th>
 							<th>姓名</th>
 							<th>计划名称</th>
@@ -109,7 +118,7 @@
 							<div class="modal-header">
 								<h4 class="modal-title" id="myModalLabel">上传用户</h4>
 							</div>
-							<form role="form" id="importForm" method="post">
+							<form role="form" id="importForm" name="importForm" enctype="multipart/form-data" method="post">
 								<div class="modal-body">
 									<div class="well">
 										<div id="sucUpd" class="alert alert-success">
@@ -126,13 +135,13 @@
 										</div>
 										<div class="alert alert-danger hide" id="tipError" style='color: white'>&nbsp;</div>
 										<div class="form-group">
-											<label for="userExcel">文件选择</label>
-											<input type="file" id="userExcel" class="form-input" name="userExcel"/>
+											<label for="file">文件选择</label>
+											<input type="file" id="file" class="form-input" name="file"/>
 										</div>
-                                        <input type="hidden" id="hiddenId"/>
-                                        <input type="hidden" id="hiddenGeNumber"/>
-                                        <input type="hidden" id="hiddenGeName"/>
-                                        <input type="hidden" id="hiddenPlanName"/>
+                                        <input type="hidden" id="hiddenId" name="id"/>
+                                        <input type="hidden" id="hiddenGeNumber" name="geNumber"/>
+                                        <input type="hidden" id="hiddenGeName" name="geName"/>
+                                        <input type="hidden" id="hiddenPlanName" name="planName"/>
 
 									</div>
 								</div>
@@ -294,6 +303,8 @@
 <!--时间插件-->
 <script src="static/style/js/dateformat.js" th:src="@{style/js/dateformat.js}"></script>
 <script src="static/style/js/jquery.datetimepicker1.js" th:src="@{style/js/jquery.datetimepicker1.js}"></script>
+<!--jquery.form-->
+<script src="static/style/js/jquery.form.min.js" th:src="@{style/js/jquery.form.min.js}"></script>
 <script type="text/javascript">
 	//<![CDATA[
 	//表单验证
@@ -381,29 +392,25 @@
 
 	});
 
-	//查看用户
-	function preview(obj){
-		var id =  $(obj).parent("td").attr("id");
-		var geNumber = $(obj).parent("td").siblings("td").eq(1).html();
-		window.location="allegeList.do?geNumber="+geNumber;
-	}
+
 
 	function listUser(){
 		//查询条件
 		var stuNumber = $("form#query #stuNumber").val();
 		var planName = $("form#query #planName").val();
 		var planState = $("form#query #planState").val();
-
+		var planType = $("form#query #planType").val();
 
 		//获取用户列表
-		$.post('listPlan.do', {"stuNumber":stuNumber, "planName":planName, "planState":planState},
+		$.post('listPlan.do', {"stuNumber":stuNumber, "planName":planName, "planState":planState,"planType":planType},
 				function(response){
 					//生成结果列表
 					initDataTable("userTable", 9, new Array("stuNumber","geName","planName","planType","planState","upName","upTime"), response.page,
 							"listPlan.do",  {"stuNumber":stuNumber,
 								"planName":planName,
-								"planState":planState
-							}, true, true, false, true,true,
+								"planState":planState,
+								"planType":planType
+							}, false, true, true, true,true,
 							"<a href='javascript:void(0)' title='上传' style='padding-right:20px' onclick='upPlan(this)'><i class='fa fa-upload'></i></a>"+
 							"<a href='javascript:void(0)' title='下载' style='padding-right:20px' onclick='downPlan(this)'><i class='fa fa-download'></i></a>"+
 							"<a href='javascript:void(0)' title='删除'  style='padding-right:20px' onclick='delPlan(this)'><i class='fa fa-trash'></i></a>"+
@@ -414,17 +421,30 @@
 					$("form#query #stuNumber").val(stuNumber);
 					$("form#query #planName").val(planName);
 					$("form#query #planState").val(planState);
+					$("form#query #planType").val(planType);
 				}
 		);
 	}
+
+	//查看用户
+	function preview(obj){
+		alert("待开发！");
+		/*
+		var id =  $(obj).parent("td").attr("id");
+		var geNumber = $(obj).parent("td").siblings("td").eq(1).html();
+		window.location="allegeList.do?geNumber="+geNumber;*/
+	}
+
 
 	function downPlan(obj) {
 		var geNumber = $(obj).parent("td").siblings("td").eq(1).html();
 		var geName = $(obj).parent("td").siblings("td").eq(2).html();
 		var planName = $(obj).parent("td").siblings("td").eq(3).html();
 		var fileName = geNumber+"-"+geName+"-"+planName;
-		window.location="downPlan.do?fileName="+fileName;
+		window.location.href="downPlan.do?fileName="+encodeURI(encodeURI(fileName));
 	}
+
+
 	//上传计划
 	function upPlan(obj){
 		if($("#role1").val()==undefined){
@@ -439,25 +459,51 @@
             $("#importForm #hiddenGeNumber").val(geNumber);
             $("#importForm #hiddenPlanName").val(planName);
 			$("label.error").remove();
-			$("#importForm #userExcel").val("");
+			$("#importForm #file").val("");
 			$("div#importModal #sucUpd").hide();
 			$("div#importModal #failUpd").hide();
 			$("#importModal").modal('show');
+
 			//设置表单验证
 			$("#importForm").validate({
 				//onfocusout:false,
 				onkeyup:false,
-				rules:{userExcel:{required:true}},
-				messages:{userExcel:{required:"请选择要上传的Excel文件<br/>"}},
+				rules:{file:{required:true}},
+				messages:{file:{required:"请选择要上传的Excel文件<br/>"}},
 				submitHandler:function(){
 					if(!$("#importForm").valid()){
 						$("div#importModal #sucUpd").hide();
 						$("div#importModal #failUpd").hide();
-					}
-					else{
+					}else{
+						$('#importForm').ajaxSubmit({
+							type:"post",
+							url:"upPlan.do",
+							data:$('#importForm').serialize(),
+							dataType:"json",
+							success:function(response){
+								if(response.tip=="success"){
+									$("div#importModal #sucUpd").show();
+									$("div#importModal #failUpd").hide();
+									//关闭窗口后刷新列表
+									$("#importForm #cancel").click(function(){listUser();});
+								}else{
+									$("div#importModal #failUpd").show();
+									$("div#importModal #sucUpd").hide();
+									$("#importForm #cancel").click(function(){listUser();});
+								}
+							},
+							error:function () {
+								alert("123");
+								$("div#importModal #failUpd").show();
+								$("div#importModal #sucUpd").hide();
+								$("#importForm #cancel").click(function(){listUser();});
+							}
+
+						});
+						/*
 						var formData = new FormData();
 						var name = $("#importForm").val();
-						formData.append("file",$("#userExcel")[0].files[0]);
+						formData.append("file",$("#file")[0].files[0]);
 						formData.append("name",name);
                         formData.append("id",$("#importForm #hiddenId").val());
                         formData.append("geNumber",$("#importForm #hiddenGeNumber").val());
@@ -486,7 +532,7 @@
 								$("div#importModal #failUpd").show();
 								$("div#importModal #sucUpd").hide();
 							}
-						});
+						});*/
 
 					}
 				}

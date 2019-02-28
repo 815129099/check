@@ -21,6 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -116,6 +117,7 @@ public class ReportController {
 
     @RequestMapping({"/downReport.do"})
     public ResponseEntity<byte[]> downReport(HttpServletRequest request, @RequestParam("fileName") String fileName) throws Exception {
+        fileName = URLDecoder.decode(fileName,"UTF-8");
         String path = "C:/check/report/";
         String fName =fileName+".docx";
         File file = new File(path + File.separator + fName);
@@ -128,10 +130,10 @@ public class ReportController {
             }
         }
         HttpHeaders headers = new HttpHeaders();
-        String downloadFielName = new String(fName.getBytes("UTF-8"), "iso-8859-1");
+        String downloadFielName = new String(fName.getBytes("GBK"), "iso-8859-1");
         headers.setContentDispositionFormData("attachment", downloadFielName);
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        return new ResponseEntity(FileUtils.readFileToByteArray(file), headers, HttpStatus.CREATED);
+        return new ResponseEntity(FileUtils.readFileToByteArray(file), headers, HttpStatus.OK);
     }
 
     @RequestMapping(value = {"/Report.do"}, method = {RequestMethod.POST})

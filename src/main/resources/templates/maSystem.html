@@ -94,16 +94,10 @@
                             <cite>关系管理</cite>
                         </a>
                     </li >
-                    <li shiro:hasRole="tutor">
-                        <a _href="userInform.do">
+                    <li shiro:hasRoles="tutor,admin">
+                        <a _href="checkList.do">
                             <i class="iconfont">&#xec0e;</i>
-                            <cite>填写考核成绩</cite>
-                        </a>
-                    </li >
-                    <li shiro:hasRole="admin">
-                        <a _href="accountList.do">
-                            <i class="iconfont">&#xec0e;</i>
-                            <cite>考核成绩列表</cite>
+                            <cite>考核成绩</cite>
                         </a>
                     </li >
                 </ul>

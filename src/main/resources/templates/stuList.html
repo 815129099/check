@@ -56,15 +56,13 @@
 					<!--/数据表格-->
 
 						<ul class="toolbar">
-							<li><a href="javascript:void(0)" id="addUser"><i class="fa fa-user"></i><span>添加</span></a></li>
-							<li><a href="javascript:void(0)" id="lockUser" onclick='lockUser()'><i class="fa fa-toggle-on"></i><span>锁定</span></a></li>
-							<li><a href="javascript:void(0)" id="clearUser" onclick='clearUser()'><i class="fa fa-toggle-off"></i><span>解锁</span></a></li>
+							<li><a href="javascript:void(0)" id="addTeacher"><i class="fa fa-user"></i><span>添加关系</span></a></li>
 						</ul>
 					<table class="table table-striped table-bordered table-hover" id="userTable">
 						<thead>
 						<tr>
 
-							<th><input type="checkbox" id="chkAll"/></th>
+							<th>#</th>
 							<th>储干工号</th>
 							<th>储干姓名</th>
 							<th>导师工号</th>
@@ -89,13 +87,13 @@
 
 				</div>
 
-				<!--添加用户-->
+				<!--添加关系-->
 				<div class="modal fade" id="addModal" role="dialog"
 					 aria-labelledby="myModalLabel" aria-hidden="true">
 					<div class="modal-dialog">
 						<div class="modal-content">
 							<div class="modal-header">
-								<h4 class="modal-title" id="myModalLabel">添加员工</h4>
+								<h4 class="modal-title" id="myModalLabel">添加关系</h4>
 							</div>
 							<form role="form" id="addform" method="post">
 								<div class="modal-body">
@@ -114,33 +112,17 @@
 										</div>
 
 										<div class="alert alert-danger hide" id="tipError" style='color: white'>&nbsp;</div>
-										<div class="form-group" style="margin-right: 10px" id="bId">
-											<label>工号:</label>
-											<input type="text" class="form-control" name="geNumber" id="geNumber" placeholder="工号"/>
+										<div class="form-group" style="margin-right:10px">
+											<label>储干工号:</label>
+											<select name="stuNumber" id="stuNumber" class="form-control">
+												<option value="">请选择</option>
+											</select>
 										</div>
-										<div class="form-group" style="margin-right: 10px">
-											<label>名称:</label>
-											<input type="text" class="form-control" name="geName" id="geName" placeholder="名称"/>
-										</div>
-										<div class="form-group" style="margin-right: 10px">
-											<label>邮箱:</label>
-											<input type="text" class="form-control" name="email" id="email" placeholder="邮箱"/>
-										</div>
-										<div class="form-group" style="margin-right: 10px">
-											<label>押金（选填，数量不填或少于50，用户不可借书）:</label>
-											<input type="text" class="form-control" name="userMoney" id="userMoney" placeholder="押金"/>
-										</div>
-										<div class="form-group" style="margin-right: 10px">
-											<label>密码:</label>
-											<input type="password" class="form-control" name="password" id="password" placeholder="密码"/>
-										</div>
-										<div class="form-group" style="margin-right: 10px">
-											<label>验证密码:</label>
-											<input type="password" class="form-control" name="rePassword" id="rePassword" placeholder="再次输入密码"/>
-										</div>
-										<div class="form-group" style="margin-right: 10px">
-											<label>手机号:</label>
-											<input type="text" class="form-control" name="phone" id="phone" placeholder="手机号"/>
+										<div class="form-group" style="margin-right:10px">
+											<label>导师工号:</label>
+											<select name="tutorNumber" id="tutorNumber" class="form-control">
+												<option value="">请选择</option>
+											</select>
 										</div>
 									</div>
 								</div>
@@ -197,16 +179,14 @@
 					<!-- /.modal -->
 				</div>
 				<!--导入用户-->
-				<!--修改用户-->
+
+				<!--修改-->
 				<div class="modal fade" id="updateModal" role="dialog"
 					 aria-labelledby="myModalLabel" aria-hidden="true">
 					<div class="modal-dialog">
 						<div class="modal-content">
 							<div class="modal-header">
-								<!--
-                                    <button type="button" class="close" aria-hidden="true">&times;</button>
-                                    -->
-								<h4 class="modal-title" id="myModalLabel">修改用户信息</h4>
+								<h4 class="modal-title" id="myModalLabel">变更导师</h4>
 							</div>
 							<form role="form" id="updateform">
 								<div class="modal-body">
@@ -226,29 +206,13 @@
 
 										<div class="alert alert-danger hide" id="tipError" style='color: white'>&nbsp;</div>
 										<div class="form-group" style="margin-right: 10px">
-											<label>工号:</label>
-											<input type="text" class="form-control" name="geNumber" id="geNumber" placeholder="工号" readonly="readonly"/>
+											<label>储干工号:</label>
+											<input type="text" class="form-control" name="stuNumber" id="stuNumber" placeholder="储干工号" readonly="readonly"/>
 										</div>
 										<div class="form-group" style="margin-right: 10px">
-											<label>手机号码:</label>
-											<input type="text" class="form-control" name="phone" id="phone" placeholder="手机号码"/>
+											<label>新导师工号:</label>
+											<input type="text" class="form-control" name="tutorNumber" id="tutorNumber" placeholder="新导师工号"/>
 										</div>
-										<div class="form-group" style="margin-right: 10px">
-											<label>新密码:</label>
-											<input type="password" class="form-control" name="password" id="password" placeholder="新密码"/>
-										</div>
-										<div class="form-group" style="margin-right: 10px">
-											<label>验证密码:</label>
-											<input type="password" class="form-control" name="rePassword" id="rePassword" placeholder="再次输入密码"/>
-										</div>
-										<div class="form-group" style="margin-right: 10px">
-											<label>状态:</label>
-											<select name="userState" id="userState" class="form-control">
-												<option value="有效">有效</option>
-												<option value="无效">无效</option>
-											</select>
-										</div>
-
 									</div>
 								</div>
 								<div class="modal-footer">
@@ -313,7 +277,6 @@
 			window.location.href='exportTeacher.do';
 		});
 
-
 		//导入用户
 		$("#querybtn2").click(function(){
 			$("label.error").remove();
@@ -366,53 +329,51 @@
 			});
 		});
 
-		//添加用户
-		$("a#addUser").click(function(){
-
-			$("#addform #geNumber").val("");
-			$("#addform #geName").val("");
-			$("#addform #phone").val("");
-			$("#addform #email").val("");
+		//添加关系
+		$("a#addTeacher").click(function(){
+			$("#addform #stuNumber").val("");
+			$("#addform #tutorNumber").val("");
 			$("label.error").remove();
-
 			$("div#addModal #sucUpd").hide();
 			$("div#addModal #failUpd").hide();
-
 			$("#addModal").modal('show');
 
 			//验证工号是否已用
-			$("#addform #geNumber").blur(function(){
 
-				$.post("isNumberExist.do",{"geNumber":$("#addform #geNumber").val()},function(response){
-					$("#addform #geNumber").parent().find("label.error").remove();
-					if(response.tip=="error"){
-						$("#addform #geNumber").parent().append("<label class='error'>该工号已存在</label>");
-						$("#addform #geNumber").focus();
-					}
+				$("#addform #stuNumber").empty();
+				$.post("getStuNumber.do",{},function(response){
+					$("#addform #stuNumber").parent().find("label.error").remove();
+					var json = eval(response.list);
+					for (var i = json.length - 1; i >= 0; i--) {
+						$("#addform #stuNumber").prepend('<option value="' + json[i].geNumber + '">' + json[i].geName + '</option>')
+					};
+					$("#addform #stuNumber").prepend('<option value="">请选择</option>')
 				});
-			});
 
 
+			//验证工号是否已用
+
+				$("#addform #tutorNumber").empty();
+				$.post("getTutorNumber.do",{},function(response){
+					$("#addform #tutorNumber").parent().find("label.error").remove();
+					var json = eval(response.list);
+					for (var i = json.length - 1; i >= 0; i--) {
+						$("#addform #tutorNumber").prepend('<option value="' + json[i].geNumber + '">' + json[i].geName + '</option>')
+					};
+					$("#addform #tutorNumber").prepend('<option value="">请选择</option>')
+				});
 
 			//设置表单验证
 			$("#addform").validate({
 				//onfocusout:false,
 				onkeyup:false,
 				rules:{
-					geNumber:{required:true,rangelength:[7,7]},
-					geName:{required:true},
-					password:{required:true,rangelength:[6,10]},
-					rePassword:{required:true,equalTo:"#password"},
-					phone:{required:true,isMobile:true},
-					email:{required:true,email:true},
+					stuNumber:{required:true},
+					tutorNumber:{required:true}
 				},
 				messages:{
-					geNumber:{required:"工号不能为空<br/>",rangelength:"请输入7位员工工号<br/>"},
-					geName:{required:"名称不能为空<br/>"},
-					password:{required:"密码不能为空<br/>",rangelength:"请输入6~10位有效密码<br/>"},
-					rePassword:{required:"验证密码不能为空<br/>",equalTo:"密码不一致<br/>"},
-					phone:{required:"手机号不能为空<br/>",isMobile:"请输入正确的手机号"},
-					email:{required:"邮箱不能为空<br/>",isMobile:"请输入正确的邮箱"}
+					stuNumber:{required:"不能为空<br/>"},
+					tutorNumber:{required:"不能为空<br/>"}
 				},
 				submitHandler:function(){
 					if(!$("#addform").valid()){
@@ -421,14 +382,10 @@
 					}
 					else{
 						$.ajax({
-							url:"User.do",
+							url:"Teacher.do",
 							type:"POST",
-							data:{"geNumber":$("#addform #geNumber").val(),
-								"geName":$("#addform #geName").val(),
-								"password":$("#addform #rePassword").val(),
-								"phone":$("#addform #phone").val(),
-								"email":$("#addform #email").val(),
-								"userMoney":$("#addform #userMoney").val()},
+							data:{"stuNumber":$("#addform #stuNumber").val(),
+								"tutorNumber":$("#addform #tutorNumber").val()},
 							success:function(response){
 								if(response.tip=="success"){
 									$("div#addModal #sucUpd").show();
@@ -451,9 +408,11 @@
 
 	//查看用户
 	function preview(obj){
+		alert("待开发");
+		/*
 		var id =  $(obj).parent("td").attr("id");
 		var geNumber = $(obj).parent("td").siblings("td").eq(1).html();
-		window.location="allegeList.do?geNumber="+geNumber;
+		window.location="allegeList.do?geNumber="+geNumber;*/
 	}
 
 	function listUser(){
@@ -462,15 +421,15 @@
 		var tutorNumber = $("form#query #tutorNumber").val();
 
 		//获取用户列表
-		$.post('listStu.do', {"stuNumber":stuNumber, "tutorNumber":tutorNumber},
+		$.post('listTeacher.do', {"stuNumber":stuNumber, "tutorNumber":tutorNumber},
 				function(response){
 					//生成结果列表
 					initDataTable("userTable", 6, new Array("stuNumber","stuName","tutorNumber","tutorName"), response.page,
-							"listStu.do",  {"stuNumber":stuNumber,
+							"listTeacher.do",  {"stuNumber":stuNumber,
 								"tutorNumber":tutorNumber
-							}, true, true, false, true,true,
-							"<a href='javascript:void(0)' id='update' title='修改' style='padding-right:20px' onclick='updateUser(this)'><i class='fa fa-edit'></i></a>"+
-							"<a href='javascript:void(0)' title='删除' id='del' style='padding-right:20px' onclick='delUser(this)'><i class='fa fa-trash'></i></a>"+
+							}, false, true, true, true,true,
+							"<a href='javascript:void(0)' title='修改'  style='padding-right:20px' onclick='updateUser(this)'><i class='fa fa-edit'></i></a>"+
+							"<a href='javascript:void(0)' title='删除'  style='padding-right:20px' onclick='delUser(this)'><i class='fa fa-trash'></i></a>"+
 							"<a href='javascript:void(0)' title='查看'  style='padding-right:20px' onclick='preview(this)'><i class='fa fa-wrench'></i></a>",
 							"id"
 					);
@@ -487,12 +446,11 @@
 	function updateUser(obj){
 		//初始化模态窗口
 		var id = $(obj).parent("td").attr("id");
-		var geNumber = $(obj).parent("td").siblings("td").eq(1).html();
-		$("#updateform #geNumber").val(geNumber);
-		$("#updateform #phone").val("");
-		$("#updateform #password").val("");
-		$("#updateform #rePassword").val("");
-		$("#updateform #userState").val("");
+		var stuNumber = $(obj).parent("td").siblings("td").eq(1).html();
+		var tutorNumber = $(obj).parent("td").siblings("td").eq(3).html();
+		$("#updateform #stuNumber").val(stuNumber);
+		$("#updateform #tutorNumber").val(tutorNumber);
+
 		$("label.error").remove();
 		$("div#updateModal #sucUpd").hide();
 		$("div#updateModal #failUpd").hide();
@@ -502,16 +460,12 @@
 			onfocusout:false,
 			onkeyup:false,
 			rules:{
-				phone:{required:true,isMobile:true},
-				password:{required:true,rangelength:[6,10]},
-				rePassword:{required:true,equalTo:"#updateform #password"},
-				userState:{required:true}
+				stuNumber:{required:true,rangelength:[7,7]},
+				tutorNumber:{required:true,rangelength:[7,7]}
 			},
 			messages:{
-				phone:{required:"手机号不能为空<br/>",isMobile:"请输入正确的手机号<br/>"},
-				password:{required:"新密码不能为空<br/>",rangelength:"请输入6~10位有效密码<br/>"},
-				rePassword:{required:"验证密码不能为空<br/>",equalTo:"密码不一致<br/>"},
-				userState:{required:"用户状态不能为空<br/>"}
+				stuNumber:{required:"储干工号不能为空<br/>",rangelength:"请输入7位员工号<br/>"},
+				tutorNumber:{required:"导师工号不能为空<br/>",rangelength:"请输入7位员工号<br/>"}
 			}
 		});
 
@@ -521,13 +475,11 @@
 				$("div#updateModal #failUpd").hide();
 			}
 			else{
-				var geNumber = $("#updateform #geNumber").val();
-				var phone = $("#updateform #phone").val();
-				var password = $("#updateform #password").val();
-				var userState = $("#updateform #userState").val();
-				var data = {"geNumber":geNumber,"phone":phone,"password":password,"userState":userState};
+				var stuNumber = $("#updateform #stuNumber").val();
+				var tutorNumber = $("#updateform #tutorNumber").val();
+				var data = {"stuNumber":stuNumber,"tutorNumber":tutorNumber};
 				$.ajax({
-					url:"User.do",
+					url:"Teacher.do",
 					type:"PUT",
 					data:JSON.stringify(data),
 					contentType:"application/json",
@@ -535,14 +487,12 @@
 						if(response.tip=="success"){
 							$("div#updateModal #sucUpd").show();
 							$("div#updateModal #failUpd").hide();
-							$("#updateform #phone").val("");
-							$("#updateform #password").val("");
-							$("#updateform #repassword").val("");
-							$("#updateform #userState").val("");
+							$("#updateform #stuNumber").val("");
+							$("#updateform #tutorNumber").val("");
 							listUser();
 						}else{
-							$("div#resetModal #failUpd").show();
-							$("div#resetModal #sucUpd").hide();
+							$("div#updateModal #failUpd").show();
+							$("div#updateModal #sucUpd").hide();
 						}}
 				})
 			}
@@ -551,15 +501,11 @@
 
 	//删除用户
 	function delUser(obj){
-		var state = $(obj).parent("td").siblings("td").eq(4).html();
-		if(state=="有效"){
-			alert("有效状态的用户不可删除！！！");
-		}else{
-			if(confirm("请确保用户借还书都已结清，是否删除该用户？")){
-				var geNumber = $(obj).parent("td").siblings("td").eq(1).html();
-				var data = {"geNumber":geNumber};
+			if(confirm("是否删除该关系？")){
+				var id = $(obj).parent("td").attr("id");
+				var data = {"id":id};
 				$.ajax({
-					url:"User.do",
+					url:"Teacher.do",
 					type:"DELETE",
 					data:JSON.stringify(data),
 					contentType:"application/json",
@@ -572,97 +518,8 @@
 						}}
 				});
 			}
-		}
 
-	}
-
-
-
-	function lockUser(){
-		var row,id;
-		var num = 0;
-		var arr = new Array();
-		$("input[type='checkbox']").each(function(){
-			if($(this).is(":checked"))
-			{
-				row = $(this).parent("td").parent("tr");
-				var flag = row.find("td").eq(4).html();
-				if(flag!="无效"){
-					id = row.find("td #update").parents("td").attr("id");
-					if(id!=undefined){
-						arr[num] = id;
-						num++;
-					}
-				}else{
-					alert("用户"+row.find("td").eq(2).html()+"已被锁定，请勿重复提交！")
-				}
-
-			}
-		});
-
-		if(num==0){
-			alert("请选择记录");
-		}else{
-			$.ajax({
-				url:"lockUser.do",
-				type:"post",
-				data:{arr:arr},
-				traditional: true,
-				success:function(result){
-					if(result.tip=="success"){
-						alert("锁定成功");
-					}else{
-						alert("锁定失败");
-					}
-					listUser();
-				}
-			});
-		}
-		$("input:checkbox").removeAttr("checked");
-	}
-
-	function clearUser(){
-		var row,id;
-		var num = 0;
-		var arr = new Array();
-		$("input[type='checkbox']").each(function(){
-			if($(this).is(":checked"))
-			{
-				row = $(this).parent("td").parent("tr");
-				var flag = row.find("td").eq(4).html();
-				if(flag!="有效"){
-					id = row.find("td #update").parents("td").attr("id");
-					if(id!=undefined){
-						arr[num] = id;
-						num++;
-					}
-				}else{
-					alert("用户"+row.find("td").eq(3).html()+"已解锁，请不要重复提交！");
-				}
-
-			}
-		});
-
-		if(num==0){
-			alert("请选择记录");
-		}else{
-			$.ajax({
-				url:"clearUser.do",
-				type:"post",
-				data:{arr:arr},
-				traditional: true,
-				success:function(result){
-					if(result.tip=="success"){
-						alert("修改成功");
-					}else{
-						alert("修改失败");
-					}
-					listUser();
-				}
-			});
-		}
-		$("input:checkbox").removeAttr("checked");}
-	//]]>
+	}//]]>
 </script>
 </body>
 

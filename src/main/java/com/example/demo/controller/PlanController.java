@@ -23,6 +23,8 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -78,7 +80,7 @@ public class PlanController {
         return map;
     }
 
-    @RequestMapping("/upPlan.do")
+    @RequestMapping(value = "/upPlan.do",method={RequestMethod.POST},produces="text/html;charset=utf-8")
     @ResponseBody
     public Map<String, Object> upPlan(@RequestParam("file") MultipartFile file,@RequestParam("id") int id,@RequestParam("geNumber") String geNumber,@RequestParam("geName") String geName,@RequestParam("planName") String planName) {
         Map<String, Object> map = new HashMap();
@@ -110,7 +112,6 @@ public class PlanController {
             plan.setUpTime(DateUtil.getDate());
             String isSuccess = planService.updatePlanById(plan);
             map.put("tip",isSuccess);
-
             return map;
         } catch (IllegalStateException e) {
             e.printStackTrace();
@@ -122,7 +123,9 @@ public class PlanController {
     }
 
     @RequestMapping({"/downPlan.do"})
+    //@ResponseBody
     public ResponseEntity<byte[]> downPlan(HttpServletRequest request, @RequestParam("fileName") String fileName) throws Exception {
+        fileName = URLDecoder.decode(fileName,"UTF-8");
         String path = "C:/check/plan/";
         String fName =fileName+".xlsx";
         File file = new File(path + File.separator + fName);
@@ -131,10 +134,15 @@ public class PlanController {
              file = new File(path + File.separator + fName);
         }
         HttpHeaders headers = new HttpHeaders();
-        String downloadFielName = new String(fName.getBytes("UTF-8"), "iso-8859-1");
-        headers.setContentDispositionFormData("attachment", downloadFielName);
+        String downloadFielName = new String(fName.getBytes("GBK"), "iso-8859-1");
+        //String downloadFielName = dealFileName(request, fileName);
+        headers.setContentDispositionFormData("attachment",downloadFielName);
+        //headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + downloadFielName + "\"");
+        //headers.setContentDispositionFormData("attachment", downloadFielName);
+        //headers.setContentType(MediaType.APPLICATION_XHTML_XML);
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        return new ResponseEntity(FileUtils.readFileToByteArray(file), headers, HttpStatus.CREATED);
+        //headers.setContentType(MediaType.TEXT_PLAIN);
+        return new ResponseEntity(FileUtils.readFileToByteArray(file), headers, HttpStatus.OK);
     }
 
     @RequestMapping(value = {"/Plan.do"}, method = {RequestMethod.POST})
@@ -163,4 +171,6 @@ public class PlanController {
         }
         return map;
     }
+
+
 }

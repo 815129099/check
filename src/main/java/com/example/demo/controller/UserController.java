@@ -1,6 +1,5 @@
 package com.example.demo.controller;
 
-import com.example.demo.domain.Teacher;
 import com.example.demo.domain.User;
 import com.example.demo.service.UserService;
 import com.example.demo.util.ExcelParam;
@@ -11,20 +10,15 @@ import org.apache.shiro.authc.DisabledAccountException;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -65,11 +59,6 @@ public class UserController {
         return  new ModelAndView("/error");
     }
 
-    @RequestMapping("/stuList.do")
-    public ModelAndView stuList(){
-        return  new ModelAndView("/stuList");
-    }
-
     @RequestMapping("/login.do")
     public ModelAndView login(){
         return  new ModelAndView("/login");
@@ -101,27 +90,6 @@ public class UserController {
         }
 
         PageInfo<User> page = this.userService.pageUser(user, pageNum, pageSize);
-        map.put("page", page);
-        return map;
-    }
-
-    @RequestMapping({"/listStu.do"})
-    @ResponseBody
-    public Map<String, Object> listStu(Teacher teacher, Integer pageNum, Integer pageSize) throws Exception {
-        Map<String, Object> map = new HashMap();
-        if (pageNum == null || pageNum == 0) {
-            pageNum = 1;
-        }
-        if (pageSize == null) {
-            pageSize = 15;
-        }
-        if (teacher.getStuNumber() != null) {
-            teacher.setStuNumber("%" + teacher.getStuNumber() + "%");
-        }
-        if (teacher.getTutorNumber() != null) {
-            teacher.setTutorNumber("%" + teacher.getTutorNumber() + "%");
-        }
-        PageInfo<Teacher> page = this.userService.pageTeacher(teacher, pageNum, pageSize);
         map.put("page", page);
         return map;
     }
@@ -274,9 +242,6 @@ public class UserController {
         return map;
     }
 
-
-
-
     /**
      * 退出
      * @return
@@ -317,40 +282,5 @@ public class UserController {
         ExcelUtil.export(param, response);
     }
 
-    @RequestMapping("/teacherExcelImport.do")
-    @ResponseBody
-    public Map<String, Object> importTeacher(@RequestParam("file") MultipartFile file) {
-        Map<String, Object> map = new HashMap();
-        String fileName = file.getOriginalFilename();
-        String isSuccess = "";
-        try{
-            isSuccess = this.userService.teacherImport(fileName, file);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        map.put("tip", isSuccess);
-        return  map;
-    }
 
-    @RequestMapping({"exportTeacher.do"})
-    public void exportTeacher(HttpServletResponse response) throws Exception {
-        List<Map> list = this.userService.getTeacherList();
-        /*
-        for (Map<String, Object> m : list)
-        {
-            for (String k : m.keySet())
-            {
-                System.out.println(k + " : " + m.get(k));
-            }
-        }*/
-        String[] heads = new String[]{ "储干工号", "储干姓名", "导师工号", "导师姓名", "创建时间", "修改时间", "状态"};
-        List<String[]> data = new LinkedList();
-        for(int i = 0; i < list.size(); ++i) {
-            Map entity =  list.get(i);
-            String[] temp = new String[]{ entity.get("stuNumber").toString(), entity.get("stuName").toString(),entity.get("tutorNumber").toString(),entity.get("tutorName").toString(),entity.get("createTime").toString(),entity.get("updateTime").toString(),entity.get("state").toString()};
-            data.add(temp);
-        }
-        ExcelParam param = (new ExcelParam.Builder("关系列表")).headers(heads).data(data).build();
-        ExcelUtil.export(param, response);
-    }
 }

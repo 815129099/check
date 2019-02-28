@@ -57,6 +57,7 @@ public class PlanServiceImpl implements PlanService {
     }
 
     @Override
+    @Transactional
     public String updatePlanById(Plan plan) {
         String isSuccess = "error";
         this.planDao.updatePlanById(plan);
@@ -65,6 +66,7 @@ public class PlanServiceImpl implements PlanService {
     }
 
     @Override
+    @Transactional
     public boolean addPlan(Plan plan) {
         boolean isSuccess = false;
         this.planDao.addPlan(plan);
@@ -73,6 +75,7 @@ public class PlanServiceImpl implements PlanService {
     }
 
     @Override
+    @Transactional
     public boolean delPlan(int id) {
         boolean isSuccess = false;
         this.planDao.delPlan(id);

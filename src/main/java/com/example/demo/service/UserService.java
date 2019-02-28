@@ -1,12 +1,10 @@
 package com.example.demo.service;
 
-import com.example.demo.domain.Teacher;
+
 import com.example.demo.domain.User;
 import com.github.pagehelper.PageInfo;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 public interface UserService {
@@ -18,7 +16,6 @@ public interface UserService {
 
     PageInfo<User> pageUser(User var1, Integer var2, Integer var3);
 
-    PageInfo<Teacher> pageTeacher(Teacher var1, Integer var2, Integer var3);
 
     boolean addUser(User var1);
 
@@ -37,7 +34,5 @@ public interface UserService {
     String userImport(String fileName, MultipartFile file) throws Exception;
 
     List<User> getUserList();
-    List<Map> getTeacherList();
 
-    String teacherImport(String fileName, MultipartFile file) throws Exception;
 }

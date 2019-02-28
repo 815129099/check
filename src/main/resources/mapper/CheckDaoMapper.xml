@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.dao.CheckDao">
+
+
+
+    <!-- 计划列表 -->
+    <select id="listCheck" parameterType="Grade" resultType="Map">
+        SELECT u.*,user.geName
+        FROM grade u,user
+        <where>
+            <if test="stuNumber!=null and stuNumber!=''">
+                u.stuNumber LIKE #{stuNumber}
+            </if>
+            <if test="checkName!=null and checkName!=''">
+                AND u.checkName LIKE #{checkName}
+            </if>
+            <if test="checkState!=null and checkState!=''">
+                AND u.checkState = #{checkState}
+            </if>
+            <if test="checkType!=null and checkType!=''">
+                AND u.checkType = #{checkType}
+            </if>
+            and u.checkState!="删除" and u.stuNumber = user.geNumber
+        </where>
+
+    </select>
+
+    <!-- 计划列表 -->
+    <select id="listCheckByTutor" parameterType="Grade" resultType="Map">
+        SELECT u.*,user.geName
+        FROM grade u,teacher,user
+        <where>
+            <if test="p.stuNumber!=null and p.stuNumber!=''">
+                u.stuNumber LIKE #{p.stuNumber}
+            </if>
+            <if test="p.checkName!=null and p.checkName!=''">
+                AND u.checkName LIKE #{p.checkName}
+            </if>
+            <if test="p.checkState!=null and p.checkState!=''">
+                AND u.checkState = #{p.checkState}
+            </if>
+            <if test="p.checkType!=null and p.checkType!=''">
+                AND u.checkType = #{p.checkType}
+            </if>
+            and u.checkState!="删除" and teacher.tutorNumber = #{geNumber} and teacher.stuNumber = u.stuNumber and teacher.stuNumber = user.geNumber
+        </where>
+    </select>
+
+
+    <insert id="addCheck" parameterType="Grade">
+        insert into grade(stuNumber,checkName,checkType,checkState)
+        values (#{stuNumber},#{checkName},#{checkType},"未评分")
+    </insert>
+
+
+    <update id="delCheck" parameterType="int">
+        update grade
+        set checkState="删除"
+        where id=#{id}
+    </update>
+
+    <select id="getGradeById" parameterType="int" resultType="Grade">
+        select *
+        from grade
+        where id=#{id}
+    </select>
+
+    <update id="updateCheck" parameterType="Grade">
+        update grade
+        <set>
+            <if test="duty!=null and duty!=''">
+                duty = #{duty},
+            </if>
+            <if test="discipline!=null and discipline!=''">
+                discipline = #{discipline},
+            </if>
+            <if test="work!=null and work!=''">
+                work = #{work},
+            </if>
+            <if test="team!=null and team!=''">
+                team = #{team},
+            </if>
+            <if test="item!=null and item!=''">
+                item = #{item},
+            </if>
+            <if test="deduct!=null and deduct!=''">
+                deduct = #{deduct},
+            </if>
+            <if test="total!=null and total!=''">
+                total = #{total},
+            </if>
+            <if test="checkPeople!=null and checkPeople!=''">
+                checkPeople = #{checkPeople},
+            </if>
+            <if test="updateTime!=null and updateTime!=''">
+                updateTime = #{updateTime},
+            </if>
+            checkState = "已评分"
+        </set>
+        where id=#{id}
+    </update>
+
+    <select id="getGradeList" resultType="Map">
+      select grade.*,user.geName as stuName,u.geName as checkPeopleName
+      from grade,user,user u
+      where grade.stuNumber = user.geNumber and grade.checkPeople = u.geNumber and grade.checkState!="删除"
+    </select>
+</mapper>

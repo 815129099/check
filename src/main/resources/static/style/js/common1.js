@@ -16,6 +16,7 @@
  */
 
 function initDataTable(tableId,colNum,attrlist,page,pageUrl,param,hasChk,chkValue,hasNo,hasPage,hasOper,operRow,operValue,emptyTip){
+	console.log(page)
 	 //清空原有表格数据
 	 $("#"+tableId+" tbody").empty();
 	 

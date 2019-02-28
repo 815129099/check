@@ -2,11 +2,11 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 <head>
 	<meta charset="UTF-8"/>
-	<title>实习报告列表</title>
+	<title>培养计划列表</title>
 	<meta name="viewport" content="width=device-width,initial-scale=1" />
 	<meta name="renderer" content="webkit"/>
 	<meta http-equiv="X-UA-Compatible" content="IE=10" />
-	<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+	<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
 	<link href="static/style/css/style20160105.css" rel="stylesheet" th:href="@{style/css/style20160105.css}"/>
 	<link href="http://apps.bdimg.com/libs/fontawesome/4.2.0/css/font-awesome.min.css" rel="stylesheet"/>
 	<link rel="stylesheet" href="static/style/css/table.css"  th:href="@{style/css/table.css}"/>
@@ -40,28 +40,30 @@
 								</div>
 
 								<div class="form-group" style="margin-right:10px">
-									<label>名称:</label>
-									<input type="text" class="form-control" name="reportName" id="reportName" maxlength="128" placeholder="名称"/>
+									<label>考核名称:</label>
+									<input type="text" class="form-control" name="checkName" id="checkName" maxlength="128" placeholder="考核名称"/>
 								</div>
 								<div class="form-group" style="margin-right:10px">
 									<label>状态:</label>
-									<select name="reportState" id="reportState" class="form-control">
+									<select name="checkState" id="checkState" class="form-control">
 										<option value=""></option>
-										<option value="未上传">未上传</option>
-										<option value="已上传">已上传</option>
+										<option value="未评分">未评分</option>
+										<option value="已评分">已评分</option>
 									</select>
 								</div>
 								<div class="form-group" style="margin-right:10px">
 									<label>类型:</label>
-									<select name="reportType" id="reportType" class="form-control">
+									<select name="checkType" id="checkType" class="form-control">
 										<option value=""></option>
 										<option value="月度">月度</option>
 										<option value="年度">年度</option>
 									</select>
 								</div>
-
 								<div class="form-group">
 									<button type="button" class="btn btn-warning" id="querybtn">查询</button>
+								</div>
+								<div shiro:hasRole="admin" class="form-group pull-right">
+									<button type="button" class="btn btn-info" id="querybtn1">导出</button>
 								</div>
 							</form>
 						</div>
@@ -73,10 +75,10 @@
                         <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
                             &times;
                         </button>
-                        实习报告格式为：.docx、.doc和.pdf
+                    培训计划格式为：.xlsx和.xls
                     </div>
-						<ul class="toolbar">
-							<li shiro:hasRole="admin"><a href="javascript:void(0)" id="addReport"><i class="fa fa-user"></i><span>添加</span></a></li>
+						<ul  shiro:hasRole="admin" class="toolbar">
+							<li><a href="javascript:void(0)" id="addCheck"><i class="fa fa-user"></i><span>添加考核</span></a></li>
 						</ul>
 					<table class="table table-striped table-bordered table-hover" id="userTable">
 						<thead>
@@ -88,7 +90,8 @@
 							<th>名称</th>
 							<th>类型</th>
 							<th>状态</th>
-							<th>上传时间</th>
+							<th>评分人</th>
+							<th>修改时间</th>
 							<th>操作</th>
 						</tr>
 						</thead>
@@ -105,16 +108,18 @@
 						</tr>
 						</tfoot>
 					</table>
+
+
 				</div>
 
-				<!--上传报告-->
+				<!--上传计划-->
 				<div class="modal fade" id="importModal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 					<div class="modal-dialog">
 						<div class="modal-content">
 							<div class="modal-header">
-								<h4 class="modal-title" id="myModalLabel">上传报告</h4>
+								<h4 class="modal-title" id="myModalLabel">上传用户</h4>
 							</div>
-							<form role="form" id="importForm" method="post" enctype="multipart/form-data" name="importForm">
+							<form role="form" id="importForm" method="post">
 								<div class="modal-body">
 									<div class="well">
 										<div id="sucUpd" class="alert alert-success">
@@ -131,13 +136,13 @@
 										</div>
 										<div class="alert alert-danger hide" id="tipError" style='color: white'>&nbsp;</div>
 										<div class="form-group">
-											<label for="file">文件选择</label>
-											<input type="file" id="file" class="form-input" name="file"/>
+											<label for="userExcel">文件选择</label>
+											<input type="file" id="userExcel" class="form-input" name="userExcel"/>
 										</div>
-										<input type="hidden" id="hiddenId" name="id"/>
-										<input type="hidden" id="hiddenGeNumber" name="geNumber"/>
-										<input type="hidden" id="hiddenGeName" name="geName"/>
-                                        <input type="hidden" id="hiddenReportName " name="reportName"/>
+                                        <input type="hidden" id="hiddenId"/>
+                                        <input type="hidden" id="hiddenGeNumber"/>
+                                        <input type="hidden" id="hiddenGeName"/>
+                                        <input type="hidden" id="hiddenPlanName"/>
 
 									</div>
 								</div>
@@ -153,15 +158,15 @@
 				</div>
 				<!--上传计划-->
 
-				<!--添加培训计划-->
+				<!--添加考核-->
 				<div class="modal fade" id="addModal" role="dialog"
 					 aria-labelledby="myModalLabel" aria-hidden="true">
 					<div class="modal-dialog">
 						<div class="modal-content">
 							<div class="modal-header">
-								<h4 class="modal-title" id="myModalLabel">添加报告</h4>
+								<h4 class="modal-title" id="myModalLabel">添加考核</h4>
 							</div>
-							<form role="form" id="addReportForm" method="post">
+							<form role="form" id="addCheckForm" method="post">
 								<div class="modal-body">
 									<div class="well">
 										<div id="sucUpd" class="alert alert-success">
@@ -183,12 +188,12 @@
 											<input type="text" class="form-control" name="stuNumber" id="stuNumber" placeholder="储干工号"/>
 										</div>
 										<div class="form-group" style="margin-right: 10px">
-											<label>报告名称:</label>
-											<input type="text" class="form-control" name="reportName" id="reportName" placeholder="报告名称"/>
+											<label>考核名称:</label>
+											<input type="text" class="form-control" name="checkName" id="checkName" placeholder="考核名称"/>
 										</div>
 										<div class="form-group" style="margin-right:10px">
-											<label>报告类型:</label>
-											<select name="reportType" id="reportType" class="form-control">
+											<label>考核类型:</label>
+											<select name="checkType" id="checkType" class="form-control">
 												<option value=""></option>
 												<option value="年度">年度</option>
 												<option value="月度">月度</option>
@@ -207,10 +212,9 @@
 					</div>
 					<!-- /.modal -->
 				</div>
-				<!-- /添加用户-->
+				<!-- /添加考核-->
 
-
-				<!--修改用户-->
+				<!--评分-->
 				<div class="modal fade" id="updateModal" role="dialog"
 					 aria-labelledby="myModalLabel" aria-hidden="true">
 					<div class="modal-dialog">
@@ -219,7 +223,7 @@
 								<!--
                                     <button type="button" class="close" aria-hidden="true">&times;</button>
                                     -->
-								<h4 class="modal-title" id="myModalLabel">修改用户信息</h4>
+								<h4 class="modal-title" id="myModalLabel">评分</h4>
 							</div>
 							<form role="form" id="updateform">
 								<div class="modal-body">
@@ -228,42 +232,47 @@
 											<button type="button" class="close" id="close" aria-hidden="true">
 												&times;
 											</button>
-											<strong>修改成功！</strong>
+											<strong>评分成功！</strong>
 										</div>
 										<div id="failUpd" class="alert alert-warning">
 											<button type="button" class="close" id="close"   aria-hidden="true">
 												&times;
 											</button>
-											<strong>修改失败！</strong>
+											<strong>评分失败！</strong>
 										</div>
 
 										<div class="alert alert-danger hide" id="tipError" style='color: white'>&nbsp;</div>
 										<div class="form-group" style="margin-right: 10px">
-											<label>工号:</label>
-											<input type="text" class="form-control" name="geNumber" id="geNumber" placeholder="工号" readonly="readonly"/>
+											<label>储干名称:</label>
+											<input type="text" class="form-control" name="geName" id="geName" placeholder="储干名称" readonly="readonly"/>
 										</div>
 										<div class="form-group" style="margin-right: 10px">
-											<label>新密码:</label>
-											<input type="password" class="form-control" name="password" id="password" placeholder="新密码"/>
+											<label>考核名称:</label>
+											<input type="text" class="form-control" name="checkName" id="checkName" placeholder="考核名称"  readonly="readonly"/>
 										</div>
 										<div class="form-group" style="margin-right: 10px">
-											<label>验证密码:</label>
-											<input type="password" class="form-control" name="rePassword" id="rePassword" placeholder="再次输入密码"/>
+											<label>考核项（责任心、主动性）:</label>
+											<input type="text" class="form-control" name="duty" id="duty" placeholder="请填写1-25的数值"/>
 										</div>
 										<div class="form-group" style="margin-right: 10px">
-											<label>状态:</label>
-											<select name="userState" id="userState" class="form-control">
-												<option value="有效">有效</option>
-												<option value="无效">无效</option>
-											</select>
+											<label>考核项（组织纪律、原则性）:</label>
+											<input type="text" class="form-control" name="discipline" id="discipline" placeholder="请填写1-25的数值"/>
 										</div>
 										<div class="form-group" style="margin-right: 10px">
-											<label>手机号码:</label>
-											<input type="text" class="form-control" name="phone" id="phone" placeholder="手机号码"/>
+											<label>考核项（工作能力）:</label>
+											<input type="text" class="form-control" name="work" id="work" placeholder="请填写1-25的数值"/>
 										</div>
 										<div class="form-group" style="margin-right: 10px">
-											<label>邮箱:</label>
-											<input type="text" class="form-control" name="email" id="email" placeholder="邮箱"/>
+											<label>考核项（团队协作能力）:</label>
+											<input type="text" class="form-control" name="team" id="team" placeholder="请填写1-25的数值"/>
+										</div>
+										<div class="form-group" style="margin-right: 10px">
+											<label>特殊事项:</label>
+											<textarea class="form-control" name="item" id="item" placeholder="请填写特殊事项，多个事项以；隔开" rows="3"></textarea>
+										</div>
+										<div class="form-group" style="margin-right: 10px">
+											<label>特殊事项扣除分值:</label>
+											<input type="text" class="form-control" name="deduct" id="deduct" placeholder="一个特殊事项扣除5分"/>
 										</div>
 									</div>
 								</div>
@@ -300,8 +309,6 @@
 <!--时间插件-->
 <script src="static/style/js/dateformat.js" th:src="@{style/js/dateformat.js}"></script>
 <script src="static/style/js/jquery.datetimepicker1.js" th:src="@{style/js/jquery.datetimepicker1.js}"></script>
-<!--jquery.form-->
-<script src="static/style/js/jquery.form.min.js" th:src="@{style/js/jquery.form.min.js}"></script>
 <script type="text/javascript">
 	//<![CDATA[
 	//表单验证
@@ -328,53 +335,53 @@
 			listUser();
 		});
 		$("#querybtn1").click(function(){
-			window.location.href='exportReport.do';
+			window.location.href='exportGrade.do';
 		});
 
 
-		//添加报告
-		$("a#addReport").click(function(){
+		//添加考核
+		$("a#addCheck").click(function(){
 
-			$("#addReportForm #stuNumber").val("");
-			$("#addReportForm #reportName").val("");
-			$("#addReportForm #reportType").val("");
+			$("#addCheckForm #stuNumber").val("");
+			$("#addCheckForm #checkName").val("");
+			$("#addCheckForm #checkType").val("");
 			$("label.error").remove();
 			$("div#addModal #sucUpd").hide();
 			$("div#addModal #failUpd").hide();
 			$("#addModal").modal('show');
 
 			//设置表单验证
-			$("#addReportForm").validate({
+			$("#addCheckForm").validate({
 				//onfocusout:false,
 				onkeyup:false,
 				rules:{
 					stuNumber:{required:true,rangelength:[7,7]},
-					reportName:{required:true},
-					reportType:{required:true}
+					checkName:{required:true},
+					checkType:{required:true}
 				},
 				messages:{
 					stuNumber:{required:"工号不能为空<br/>",rangelength:"请输入7位员工工号<br/>"},
-					reportName:{required:"报告名称不能为空<br/>"},
-					reportType:{required:"请选择报告类型<br/>"}
+					checkName:{required:"考核名称不能为空<br/>"},
+					checkType:{required:"请选择考核类型<br/>"}
 				},
 				submitHandler:function(){
-					if(!$("#addReportForm").valid()){
+					if(!$("#addCheckForm").valid()){
 						$("div#addModal #sucUpd").hide();
 						$("div#addModal #failUpd").hide();
 					}
 					else{
 						$.ajax({
-							url:"Report.do",
+							url:"Check.do",
 							type:"POST",
-							data:{"stuNumber":$("#addReportForm #stuNumber").val(),
-								"reportName":$("#addReportForm #reportName").val(),
-								"reportType":$("#addReportForm #reportType").val()},
+							data:{"stuNumber":$("#addCheckForm #stuNumber").val(),
+								"checkName":$("#addCheckForm #checkName").val(),
+								"checkType":$("#addCheckForm #checkType").val()},
 							success:function(response){
 								if(response.tip=="success"){
 									$("div#addModal #sucUpd").show();
 									$("div#addModal #failUpd").hide();
 									//关闭窗口后刷新列表
-									$("#addReportForm #cancel").click(function(){listUser();});
+									$("#addCheckForm #cancel").click(function(){listUser();});
 								}
 								else{
 									$("div#addModal #failUpd").show();
@@ -390,39 +397,40 @@
 	});
 
 
+
 	function listUser(){
 		//查询条件
 		var stuNumber = $("form#query #stuNumber").val();
-		var reportName = $("form#query #reportName").val();
-		var reportState = $("form#query #reportState").val();
-		var reportType = $("form#query #reportType").val();
+		var checkName = $("form#query #checkName").val();
+		var checkState = $("form#query #checkState").val();
+		var checkType = $("form#query #checkType").val();
 
 
 		//获取用户列表
-		$.post('listReport.do', {"stuNumber":stuNumber, "reportName":reportName, "reportState":reportState,"reportType":reportType},
+		$.post('listCheck.do', {"stuNumber":stuNumber, "checkName":checkName, "checkState":checkState,"checkType":checkType},
 				function(response){
 					//生成结果列表
-					initDataTable("userTable", 8, new Array("stuNumber","geName","reportName","reportType","reportState","upTime"), response.page,
-							"listReport.do",  {"stuNumber":stuNumber,
-								"reportName":reportName,
-								"reportState":reportState,
-								"reportType":reportType
+					initDataTable("userTable", 9, new Array("stuNumber","geName","checkName","checkType","checkState","checkPeople","updateTime"), response.page,
+							"listCheck.do",  {"stuNumber":stuNumber,
+								"checkName":checkName,
+								"checkState":checkState,
+								"checkType":checkType
 							}, false, true, true, true,true,
-							"<a href='javascript:void(0)' title='上传' style='padding-right:20px' onclick='upReport(this)'><i class='fa fa-upload'></i></a>"+
-							"<a href='javascript:void(0)' title='下载' style='padding-right:20px' onclick='downReport(this)'><i class='fa fa-download'></i></a>"+
-							"<a href='javascript:void(0)' title='删除'  style='padding-right:20px' onclick='delReport(this)'><i class='fa fa-trash'></i></a>"+
+							"<a href='javascript:void(0)' title='评分' style='padding-right:20px' onclick='updateCheck(this)'><i class='fa fa-edit'></i></a>"+
+							"<a href='javascript:void(0)' title='删除'  style='padding-right:20px' onclick='delCheck(this)'><i class='fa fa-trash'></i></a>"+
 							"<a href='javascript:void(0)' title='查看'  style='padding-right:20px' onclick='preview(this)'><i class='fa fa-wrench'></i></a>",
 							"id"
 					);
 					//设置查询条件
 					$("form#query #stuNumber").val(stuNumber);
-					$("form#query #reportName").val(reportName);
-					$("form#query #reportState").val(reportState);
-					$("form#query #reportType").val(reportType);
+					$("form#query #checkName").val(checkName);
+					$("form#query #checkState").val(checkState);
+					$("form#query #checkType").val(checkType);
 				}
 		);
 	}
 
+	//查看用户
 	function preview(obj){
 		alert("待开发！");
 		/*
@@ -432,122 +440,182 @@
 	}
 
 
-	function downReport(obj) {
-		var geNumber = $(obj).parent("td").siblings("td").eq(1).html();
-		var geName = $(obj).parent("td").siblings("td").eq(2).html();
-		var reportName = $(obj).parent("td").siblings("td").eq(3).html();
-		var fileName = geNumber+"-"+geName+"-"+reportName;
-		window.location="downReport.do?fileName="+encodeURI(encodeURI(fileName));
-	}
-
-
-	//上传计划   去掉验证
-	function upReport(obj){
+	//上传计划
+	function upPlan(obj){
 		if($("#role1").val()==undefined){
 			alert("嘿嘿，你权限不够，让你导师上传");
 		}else {
 			var id =  $(obj).parent("td").attr("id");
 			var geNumber = $(obj).parent("td").siblings("td").eq(1).html();
 			var geName = $(obj).parent("td").siblings("td").eq(2).html();
-			var reportName = $(obj).parent("td").siblings("td").eq(3).html();
-			$("#importForm #hiddenId").val(id);
+			var planName = $(obj).parent("td").siblings("td").eq(3).html();
+            $("#importForm #hiddenId").val(id);
             $("#importForm #hiddenGeName").val(geName);
             $("#importForm #hiddenGeNumber").val(geNumber);
-            $("#importForm #hiddenReportName").val(reportName);
-
+            $("#importForm #hiddenPlanName").val(planName);
 			$("label.error").remove();
-			$("#importForm #file").val("");
+			$("#importForm #userExcel").val("");
 			$("div#importModal #sucUpd").hide();
 			$("div#importModal #failUpd").hide();
 			$("#importModal").modal('show');
 			//设置表单验证
-
 			$("#importForm").validate({
 				//onfocusout:false,
 				onkeyup:false,
-				rules:{file:{required:true}},
-				messages:{file:{required:"请选择要上传的文件<br/>"}},
-				submitHandler:function(form){
-                        if(!$("#importForm").valid()){
-                            $("div#importModal #sucUpd").hide();
-                            $("div#importModal #failUpd").hide();
-                        }else{
-
-							$('#importForm').ajaxSubmit({
-								type:"post",
-								url:"upReport.do",
-								data:$('#importForm').serialize(),
-								dataType:"json",
-								success:function(response){
-									if(response.tip=="success"){
-										$("div#importModal #sucUpd").show();
-										$("div#importModal #failUpd").hide();
-										//关闭窗口后刷新列表
-										$("#importForm #cancel").click(function(){listUser();});
-									}else{
-										$("div#importModal #failUpd").show();
-										$("div#importModal #sucUpd").hide();
-										$("#importForm #cancel").click(function(){listUser();});
-									}
-								},
-								error:function () {
-									alert("123");
-									$("div#importModal #failUpd").show();
-									$("div#importModal #sucUpd").hide();
+				rules:{userExcel:{required:true}},
+				messages:{userExcel:{required:"请选择要上传的Excel文件<br/>"}},
+				submitHandler:function(){
+					if(!$("#importForm").valid()){
+						$("div#importModal #sucUpd").hide();
+						$("div#importModal #failUpd").hide();
+					}
+					else{
+						var formData = new FormData();
+						var name = $("#importForm").val();
+						formData.append("file",$("#userExcel")[0].files[0]);
+						formData.append("name",name);
+                        formData.append("id",$("#importForm #hiddenId").val());
+                        formData.append("geNumber",$("#importForm #hiddenGeNumber").val());
+                        formData.append("geName",$("#importForm #hiddenGeName").val());
+                        formData.append("planName",$("#importForm #hiddenPlanName").val());
+						$.ajax({
+							url:"upPlan.do",
+							type:"POST",
+							data:formData,
+							contentType:false,
+							processData:false,
+							success:function(response){
+								if(response.tip=="success"){
+									$("div#importModal #sucUpd").show();
+									$("div#importModal #failUpd").hide();
+									delete formData;
+									//关闭窗口后刷新列表
 									$("#importForm #cancel").click(function(){listUser();});
 								}
+								else{
+									$("div#importModal #failUpd").show();
+									$("div#importModal #sucUpd").hide();
+								}
+							},
+							error:function () {
+								$("div#importModal #failUpd").show();
+								$("div#importModal #sucUpd").hide();
+							}
+						});
 
-							});
-                        	/*
-                            var formData = new FormData();
-                            var name = $("#importForm").val();
-                            formData.append("file",$("#userExcel")[0].files[0]);
-                            formData.append("name",name);
-                            formData.append("id",$("#importForm #hiddenId").val());
-                            formData.append("geNumber",$("#importForm #hiddenGeNumber").val());
-                            formData.append("geName",$("#importForm #hiddenGeName").val());
-                            formData.append("reportName",$("#importForm #hiddenReportName").val());
-                            $.ajax({
-                                url:"upReport.do",
-                                type:"POST",
-                                data:formData,
-                                contentType:false,
-                                processData:false,
-                                success:function(response){
-                                    if(response.tip=="success"){
-                                        $("div#importModal #sucUpd").show();
-                                        $("div#importModal #failUpd").hide();
-                                        //关闭窗口后刷新列表
-                                        $("#importForm #cancel").click(function(){listUser();});
-                                    }
-                                    else{
-                                        $("div#importModal #failUpd").show();
-                                        $("div#importModal #sucUpd").hide();
-                                    }
-                                },
-                                error:function () {
-                                    $("div#importModal #failUpd").show();
-                                    $("div#importModal #sucUpd").hide();
-                                }
-                            }); */
-                        }
-                    //}
+					}
 				}
 			});
 		}
 	}
 
 
-	//删除计划
-	function delReport(obj){
+	//修改
+	function updateCheck(obj){
+		//初始化模态窗口
+		var id = $(obj).parent("td").attr("id");
+		var geName = $(obj).parent("td").siblings("td").eq(2).html();
+		var checkName = $(obj).parent("td").siblings("td").eq(3).html();
+		$("#updateform #geName").val(geName);
+		$("#updateform #checkName").val(checkName);
+		$.ajax({
+			url:"getGradeById.do",
+			type:"GET",
+			data:{"id":id},
+			success:function(response){
+				if(response.tip=="success"){
+					$("#updateform #duty").val(response.grade.duty);
+					$("#updateform #discipline").val(response.grade.discipline);
+					$("#updateform #work").val(response.grade.work);
+					$("#updateform #team").val(response.grade.team);
+					$("#updateform #item").val(response.grade.item);
+					$("#updateform #deduct").val(response.grade.deduct);
+					$("label.error").remove();
+					$("div#updateModal #failUpd").hide();
+					$("div#updateModal #sucUpd").hide();
+					$("#updateModal").modal('show');
+
+					//设置表单验证
+					$("#updateform").validate({
+						onfocusout:false,
+						onkeyup:false,
+						rules:{
+							duty:{required:true,digits:true},
+							discipline:{required:true,digits:true},
+							work:{required:true,digits:true},
+							team:{required:true,digits:true}
+						},
+						messages:{
+							duty:{required:"分数值不能为空<br/>",digits:"请输入正整数<br/>"},
+							discipline:{required:"分数值不能为空<br/>",digits:"请输入正整数<br/>"},
+							work:{required:"分数值不能为空<br/>",digits:"请输入正整数<br/>"},
+							team:{required:"分数值不能为空<br/>",digits:"请输入正整数<br/>"}
+						}
+					});
+					$("#updateform").submit(function(){
+						if(!$("#updateform").valid()){
+							$("div#updateModal #sucUpd").hide();
+							$("div#updateModal #failUpd").hide();
+						}
+						else{
+							var data = {"id":id,
+								"duty":$("#updateform #duty").val(),
+								"discipline":$("#updateform #discipline").val(),
+								"work":$("#updateform #work").val(),
+								"team":$("#updateform #team").val(),
+								"item":$("#updateform #item").val(),
+								"deduct":$("#updateform #deduct").val()};
+							$.ajax({
+								url:"Check.do",
+								type:"PUT",
+								data:JSON.stringify(data),
+								contentType:"application/json",
+								success:function(response){
+									if(response.tip=="success"){
+										$("div#updateModal #sucUpd").show();
+										$("div#updateModal #failUpd").hide();
+										$("#updateform #duty").val("");
+										$("#updateform #discipline").val("");
+										$("#updateform #work").val("");
+										$("#updateform #team").val("");
+										$("#updateform #item").val("");
+										$("#updateform #deduct").val("");
+										$("#updateform #geName").val("");
+										$("#updateform #checkName").val("");
+										listUser();
+									}else{
+										$("div#updateModal #failUpd").show();
+										$("div#updateModal #sucUpd").hide();
+									}}
+							})
+						}
+					});
+
+				}else{
+					$("div#updateModal #failUpd").show();
+					$("div#updateModal #sucUpd").hide();
+				}}
+		})
+
+
+
+
+	}
+
+
+	//删除考核
+	function delCheck(obj){
+		var f = $(obj).parent("td").siblings("td").eq(5).html();
 		if($("#role").val()==undefined){
-			alert("没有权限！");
+			alert("没有权限!");
+		}else if(f=="已评分") {
+			alert("已评分成绩不可删除，只可修改!");
 		}else {
-				if (confirm("是否删除该计划？")) {
+				if (confirm("是否删除该考核成绩？")) {
 					var id =  $(obj).parent("td").attr("id");
 					var data = {"id": id};
 					$.ajax({
-						url: "Report.do",
+						url: "Check.do",
 						type: "DELETE",
 						data: JSON.stringify(data),
 						contentType: "application/json",
@@ -561,7 +629,6 @@
 						}
 					});
 				}
-
 		}
 	}
 	//]]>

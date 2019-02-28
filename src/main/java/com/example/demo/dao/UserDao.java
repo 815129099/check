@@ -1,14 +1,12 @@
 package com.example.demo.dao;
 
+import com.example.demo.domain.Grade;
 import com.example.demo.domain.Plan;
 import com.example.demo.domain.Report;
-import com.example.demo.domain.Teacher;
 import com.example.demo.domain.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 @Mapper
@@ -20,8 +18,6 @@ public interface UserDao {
     User findByGeNumber(String var1);
 
     List<User> listUser(User var1);
-
-    List<Map> listTeacher(Teacher var1);
 
     void addUser(User var1);
 
@@ -40,9 +36,12 @@ public interface UserDao {
     void insertUserList(List<User> userList);
 
     List<User> getUserList();
-    List<Map> getTeacherList();
-    void insertTeacherList(List<Teacher> teacherList);
+
     List<String> getStudentList();
+
     void insertReportList(List<Report> rList);
+
     void insertPlanList(List<Plan> pList);
+
+    void insertCheckList(List<Grade> gList);
 }

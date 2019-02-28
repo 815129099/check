@@ -6,6 +6,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -44,6 +45,7 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
+    @Transactional
     public String updateReportById(Report report) {
         String isSuccess = "error";
         this.reportDao.updateReportById(report);
@@ -52,6 +54,7 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
+    @Transactional
     public boolean addReport(Report report) {
         boolean isSuccess = false;
         this.reportDao.addReport(report);
@@ -60,6 +63,7 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
+    @Transactional
     public boolean delReport(int id) {
         boolean isSuccess = false;
         this.reportDao.delReport(id);

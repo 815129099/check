@@ -18,6 +18,9 @@
             <if test="planState!=null and planState!=''">
                 AND u.planState = #{planState}
             </if>
+            <if test="planType!=null and planType!=''">
+                AND u.planType = #{planType}
+            </if>
             and u.planState!="删除" and u.stuNumber = user.geNumber
         </where>
 
@@ -36,6 +39,9 @@
             </if>
             <if test="p.planState!=null and p.planState!=''">
                 AND u.planState = #{p.planState}
+            </if>
+            <if test="p.planType!=null and p.planType!=''">
+                AND u.planType = #{p.planType}
             </if>
             and u.planState!="删除" and u.stuNumber=#{geNumber} and u.stuNumber = user.geNumber
         </where>
@@ -56,9 +62,12 @@
             <if test="p.planState!=null and p.planState!=''">
                 AND u.planState = #{p.planState}
             </if>
-            and u.planState!="删除"
+            <if test="p.planType!=null and p.planType!=''">
+                AND u.planType = #{p.planType}
+            </if>
+            and u.planState!="删除" and teacher.tutorNumber = #{geNumber} and teacher.stuNumber = u.stuNumber and teacher.stuNumber = user.geNumber
         </where>
-            and teacher.tutorNumber = #{geNumber} and teacher.stuNumber = u.stuNumber and
+
     </select>
 
     <update id="updatePlanById" parameterType="Plan">
